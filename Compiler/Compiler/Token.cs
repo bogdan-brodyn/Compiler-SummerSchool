@@ -8,6 +8,14 @@ namespace Compiler;
 
 public class Token(TokenType type, string? attribute = null)
 {
+    public static Token Semicolon => new (TokenType.Semicolon);
+
+    public static Token Assignment => new (TokenType.Operator, "=");
+
+    public static Token If => new (TokenType.Keyword, "if");
+
+    public static Token While => new (TokenType.Keyword, "while");
+
     public TokenType Type { get; } = type;
 
     public string? Attribute { get; } = attribute;
