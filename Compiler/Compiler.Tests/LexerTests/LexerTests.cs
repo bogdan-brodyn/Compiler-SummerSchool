@@ -12,6 +12,8 @@ public class LexerTests
 {
     private const string SamplesPath = "LexerTests/LexerTestSamples";
 
+    private const string SamplesAnswers = "LexerTests/LexerTestAnswers";
+
     [Test]
     public void Test()
     {
@@ -19,7 +21,8 @@ public class LexerTests
         {
             var text = File.ReadAllText(testFile);
             var actualTokens = Lexer.Analyze(text);
-            var jsonString = File.ReadAllText(Path.ChangeExtension(testFile, "json"));
+            var jsonStringPath = Path.Combine(SamplesAnswers, Path.ChangeExtension(Path.GetFileName(testFile), "json"));
+            var jsonString = File.ReadAllText(jsonStringPath);
             LexerTestAnswer? expected = JsonSerializer.Deserialize<LexerTestAnswer>(jsonString);
             if (expected is null)
             {

@@ -36,6 +36,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="LexerTests\LexerTestAnswers\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" />
   </ItemGroup>
 
