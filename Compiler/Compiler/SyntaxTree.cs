@@ -14,10 +14,13 @@ public class SyntaxTree
     public SyntaxTree(Token rootToken, List<SyntaxTree>? children = null)
     {
         this.rootToken = rootToken;
-        this.children = new List<SyntaxTree>();
-        if (children != null)
+        if (children == null)
         {
-            this.children.AddRange(children);
+            this.children = new List<SyntaxTree>();
+        }
+        else
+        {
+            this.children = children;
         }
     }
 

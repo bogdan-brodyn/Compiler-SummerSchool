@@ -170,7 +170,49 @@ public class Parser
 
     private SyntaxTree ParseExpression()
     {
-        throw new NotImplementedException();
+        var termTree = this.ParseTerm();
+        return this.ParseExpressionExtra(termTree);
+    }
+
+    private SyntaxTree ParseTerm()
+    {
+        ++this.position;
+        if (this.CurrentToken.Type == TokenType.LeftParenthesis)
+        {
+            return this.ParseParExpression();
+        }
+        else if (this.CurrentTokenIsConstOrId())
+        {
+            var operand = new SyntaxTree(this.CurrentToken);
+            return this.ParseTermExtra(operand);
+        }
+
+        throw new InvalidDataException("Invalid syntax: const or id expected");
+    }
+
+    private SyntaxTree ParseExpressionExtra(SyntaxTree leftOperand)
+    {
+        if (this.CurrentTokenIsOperator("+") || this.CurrentTokenIsOperator("-"))
+        {
+            var operation = this.CurrentToken;
+            var rightOperand = this.ParseExpression();
+            return new SyntaxTree(operation, leftOperand, rightOperand);
+        }
+
+        return leftOperand;
+    }
+
+    private SyntaxTree ParseTermExtra(SyntaxTree leftOperand)
+    {
+        ++this.position;
+        if (this.CurrentTokenIsOperator("*") || this.CurrentTokenIsOperator("/"))
+        {
+            var operation = this.CurrentToken;
+            var rightOperand = this.ParseTerm();
+            return new SyntaxTree(operation, leftOperand, rightOperand);
+        }
+
+        return leftOperand;
     }
 
     private SyntaxTree ParseParExpression()
@@ -192,4 +234,8 @@ public class Parser
     private bool CurrentTokenIsOperator(string op)
         => this.CurrentToken.Type == TokenType.Operator &&
            this.CurrentToken.Attribute == op;
+
+    private bool CurrentTokenIsConstOrId()
+        => this.CurrentToken.Type == TokenType.Const ||
+           this.CurrentToken.Type == TokenType.Id;
 }
