@@ -170,11 +170,11 @@ public class Parser
 
     private SyntaxTree ParseExpression()
     {
-        var termTree = this.ParseTerm();
+        var termTree = this.ParseTerm(true);
         return this.ParseExpressionExtra(termTree);
     }
 
-    private SyntaxTree ParseTerm()
+    private SyntaxTree ParseTerm(bool makeRecursiveCall)
     {
         ++this.position;
         if (this.CurrentToken.Type == TokenType.LeftParenthesis)
@@ -184,7 +184,12 @@ public class Parser
         else if (this.CurrentTokenIsConstOrId())
         {
             var operand = new SyntaxTree(this.CurrentToken);
-            return this.ParseTermExtra(operand);
+            if (makeRecursiveCall)
+            {
+                return this.ParseTermExtra(operand);
+            }
+
+            return operand;
         }
 
         throw new InvalidDataException("Invalid syntax: const or id expected");
@@ -195,8 +200,9 @@ public class Parser
         if (this.CurrentTokenIsOperator("+") || this.CurrentTokenIsOperator("-"))
         {
             var operation = this.CurrentToken;
-            var rightOperand = this.ParseExpression();
-            return new SyntaxTree(operation, leftOperand, rightOperand);
+            var rightOperand = this.ParseTerm(true);
+            leftOperand = new SyntaxTree(operation, leftOperand, rightOperand);
+            return this.ParseExpressionExtra(leftOperand);
         }
 
         return leftOperand;
@@ -208,8 +214,9 @@ public class Parser
         if (this.CurrentTokenIsOperator("*") || this.CurrentTokenIsOperator("/"))
         {
             var operation = this.CurrentToken;
-            var rightOperand = this.ParseTerm();
-            return new SyntaxTree(operation, leftOperand, rightOperand);
+            var rightOperand = this.ParseTerm(false);
+            leftOperand = new SyntaxTree(operation, leftOperand, rightOperand);
+            return this.ParseTermExtra(leftOperand);
         }
 
         return leftOperand;
