@@ -4,12 +4,9 @@
 // that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-namespace Compiler;
+namespace Compiler.Tests;
 
-public static class Lexer
+public class LexerTestAnswer
 {
-    public static List<Token> Analyze(string text)
-    {
-        throw new NotImplementedException();
-    }
+    public List<Token>? Tokens { get; set; }
 }

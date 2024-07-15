@@ -1,0 +1,17 @@
+{
+    "Tokens":
+    [
+        {
+            "Type": "Const",
+            "Attribute": "1"
+        },
+        {
+            "Type": "Operator",
+            "Attribute": "+"
+        },
+        {
+            "Type": "Const",
+            "Attribute": "2"
+        }
+    ]
+}
