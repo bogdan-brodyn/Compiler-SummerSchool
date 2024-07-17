@@ -38,6 +38,7 @@ public static class Lexer
             currentState = newState;
         }
 
+        RespondStateChange(currentState, ' ', State.InitialState, tokens, attributeAcc);
         return tokens;
     }
 
@@ -48,7 +49,6 @@ public static class Lexer
         {
             tokens.Add(new Token(TokenType.Const, attributeAcc.ToString()));
             attributeAcc.Clear();
-            return;
         }
 
         if (currentState == State.IdOrKeywordReadingState && currentState != newState)
@@ -57,7 +57,6 @@ public static class Lexer
             tokens.Add(new Token(
                 Keywords.Contains(attribute) ? TokenType.Keyword : TokenType.Id, attribute));
             attributeAcc.Clear();
-            return;
         }
 
         switch (newState)
@@ -95,7 +94,7 @@ public static class Lexer
             case State.AssignmentEndReadingState:
             case State.LeftParenthesisReadingState:
             case State.RightParenthesisReadingState:
-                if (ch == ' ' || ch == '\t' || ch == '\n') return State.InitialState;
+                if (ch == ' ' || ch == '\r' || ch == '\t' || ch == '\n') return State.InitialState;
                 if (ch >= '0' && ch <= '9') return State.ConstReadingState;
                 if (ch >= 'a' && ch <= 'z') return State.IdOrKeywordReadingState;
                 if (ch == '+' || ch == '*' || ch == '-' || ch == '/') return State.OperatorReadingState;
@@ -105,7 +104,7 @@ public static class Lexer
                 if (ch == ')') return State.RightParenthesisReadingState;
                 throw new Exception();
             case State.ConstReadingState:
-                if (ch == ' ' || ch == '\t' || ch == '\n') return State.InitialState;
+                if (ch == ' ' || ch == '\r' || ch == '\t' || ch == '\n') return State.InitialState;
                 if (ch >= '0' && ch <= '9') return State.ConstReadingState;
                 if (ch == '+' || ch == '*' || ch == '-' || ch == '/') return State.OperatorReadingState;
                 if (ch == ':') return State.AssignmentStartReadingState;
@@ -114,7 +113,7 @@ public static class Lexer
                 if (ch == ')') return State.RightParenthesisReadingState;
                 throw new Exception();
             case State.IdOrKeywordReadingState:
-                if (ch == ' ' || ch == '\t' || ch == '\n') return State.InitialState;
+                if (ch == ' ' || ch == '\r' || ch == '\t' || ch == '\n') return State.InitialState;
                 if (ch >= '0' && ch <= '9') return State.IdOrKeywordReadingState;
                 if (ch >= 'a' && ch <= 'z') return State.IdOrKeywordReadingState;
                 if (ch == '+' || ch == '*' || ch == '-' || ch == '/') return State.OperatorReadingState;

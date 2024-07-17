@@ -23,13 +23,14 @@ public class LexerTests
             var actualTokens = Lexer.Analyze(text);
             var jsonStringPath = Path.Combine(SamplesAnswers, Path.ChangeExtension(Path.GetFileName(testFile), "json"));
             var jsonString = File.ReadAllText(jsonStringPath);
-            LexerTestAnswer? expected = JsonSerializer.Deserialize<LexerTestAnswer>(jsonString);
-            if (expected is null)
+            var options = new JsonSerializerOptions() { WriteIndented = true };
+            List<Token>? expectedTokens = JsonSerializer.Deserialize<List<Token>>(jsonString, options);
+            if (expectedTokens is null)
             {
                 throw new JsonException("Json Serializtion failed!");
             }
 
-            Assert.That(actualTokens, Is.EqualTo(expected.Tokens).UsingPropertiesComparer(), $"Test: {testFile} failed");
+            Assert.That(actualTokens, Is.EqualTo(expectedTokens).UsingPropertiesComparer(), $"Test: {testFile} failed");
         }
     }
 }

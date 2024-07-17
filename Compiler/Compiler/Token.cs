@@ -13,6 +13,11 @@ public class Token(TokenType type, string? attribute = null)
     public TokenType Type { get; } = type;
 
     public string? Attribute { get; } = attribute;
+
+    public override string ToString()
+    {
+        return $"{this.Type} {this.Attribute}";
+    }
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter<TokenType>))]
