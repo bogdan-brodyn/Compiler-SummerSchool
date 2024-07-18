@@ -30,13 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="LexerTests\LexerTestSamples\*">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="LexerTests\LexerTestAnswers\*">
+    <Content Include="LexerTests\TestSamples\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

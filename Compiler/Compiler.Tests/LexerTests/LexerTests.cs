@@ -10,19 +10,15 @@ using System.Text.Json;
 
 public class LexerTests
 {
-    private const string SamplesPath = "LexerTests/LexerTestSamples";
+    private const string SamplesPath = "LexerTests/TestSamples";
 
-    private const string SamplesAnswers = "LexerTests/LexerTestAnswers";
-
-    [Test]
-    public void Test()
+    public static IEnumerable<TestCaseData> Sample()
     {
-        foreach (var testFile in Directory.EnumerateFiles(SamplesPath))
+        foreach (var dir in Directory.EnumerateDirectories(SamplesPath))
         {
-            var text = File.ReadAllText(testFile);
-            var actualTokens = Lexer.Analyze(text);
-            var jsonStringPath = Path.Combine(SamplesAnswers, Path.ChangeExtension(Path.GetFileName(testFile), "json"));
-            var jsonString = File.ReadAllText(jsonStringPath);
+            var sampleFiles = Directory.GetFiles(dir);
+            var text = File.ReadAllText(sampleFiles.First(file => file.EndsWith(".txt")));
+            var jsonString = File.ReadAllText(sampleFiles.First(file => file.EndsWith(".json")));
             var options = new JsonSerializerOptions() { WriteIndented = true };
             List<Token>? expectedTokens = JsonSerializer.Deserialize<List<Token>>(jsonString, options);
             if (expectedTokens is null)
@@ -30,7 +26,14 @@ public class LexerTests
                 throw new JsonException("Json Serializtion failed!");
             }
 
-            Assert.That(actualTokens, Is.EqualTo(expectedTokens).UsingPropertiesComparer(), $"Test: {testFile} failed");
+            yield return new TestCaseData(text, expectedTokens, Path.GetFileName(dir));
         }
+    }
+
+    [TestCaseSource(nameof(Sample))]
+    public void Test(string text, List<Token> expectedTokens, string testName)
+    {
+        var actualTokens = Lexer.Analyze(text);
+        Assert.That(actualTokens, Is.EqualTo(expectedTokens).UsingPropertiesComparer(), $"Test: {testName} failed!");
     }
 }
