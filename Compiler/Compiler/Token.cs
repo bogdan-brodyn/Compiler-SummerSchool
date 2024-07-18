@@ -12,7 +12,7 @@ public class Token(TokenType type, string? attribute = null)
 {
     public static Token Semicolon => new (TokenType.Semicolon);
 
-    public static Token Assignment => new (TokenType.Operator, "=");
+    public static Token Assignment => new (TokenType.Operator, ":=");
 
     public static Token If => new (TokenType.Keyword, "if");
 

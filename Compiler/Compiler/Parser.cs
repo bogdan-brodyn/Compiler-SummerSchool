@@ -86,9 +86,9 @@ public class Parser
     {
         var idTree = new SyntaxTree(this.CurrentToken);
         ++this.position;
-        if (!this.CurrentTokenIsOperator("="))
+        if (!this.CurrentTokenIsOperator(":="))
         {
-            throw new InvalidDataException("Invalid syntax: '=' expected");
+            throw new InvalidDataException("Invalid syntax: ':=' expected");
         }
 
         var expressionTree = this.ParseExpression();
@@ -179,7 +179,9 @@ public class Parser
         ++this.position;
         if (this.CurrentToken.Type == TokenType.LeftParenthesis)
         {
-            return this.ParseParExpression();
+            var operand = this.ParseParExpression();
+            --this.position;
+            return this.ParseTermExtra(operand);
         }
         else if (this.CurrentTokenIsConstOrId())
         {
