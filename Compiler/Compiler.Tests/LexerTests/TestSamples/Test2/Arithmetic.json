@@ -1,0 +1,46 @@
+[
+  {
+    "Type": "Const",
+    "Attribute": "1"
+  },
+  {
+    "Type": "Operator",
+    "Attribute": "\u002B"
+  },
+  {
+    "Type": "Const",
+    "Attribute": "3"
+  },
+  {
+    "Type": "Operator",
+    "Attribute": "-"
+  },
+  {
+    "Type": "Const",
+    "Attribute": "19"
+  },
+  {
+    "Type": "Operator",
+    "Attribute": "*"
+  },
+  {
+    "Type": "Const",
+    "Attribute": "10"
+  },
+  {
+    "Type": "Operator",
+    "Attribute": "\u002B"
+  },
+  {
+    "Type": "Const",
+    "Attribute": "20"
+  },
+  {
+    "Type": "Operator",
+    "Attribute": "/"
+  },
+  {
+    "Type": "Const",
+    "Attribute": "2"
+  }
+]

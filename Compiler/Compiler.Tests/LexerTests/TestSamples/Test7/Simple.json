@@ -1,0 +1,14 @@
+[
+  {
+    "Type": "Const",
+    "Attribute": "1"
+  },
+  {
+    "Type": "Operator",
+    "Attribute": "\u002B"
+  },
+  {
+    "Type": "Const",
+    "Attribute": "2"
+  }
+]
