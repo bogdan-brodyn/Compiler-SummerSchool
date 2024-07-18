@@ -6,6 +6,8 @@
 
 namespace Compiler;
 
+using System.Text.Json.Serialization;
+
 public class Token(TokenType type, string? attribute = null)
 {
     public static Token Semicolon => new (TokenType.Semicolon);
@@ -19,8 +21,14 @@ public class Token(TokenType type, string? attribute = null)
     public TokenType Type { get; } = type;
 
     public string? Attribute { get; } = attribute;
+
+    public override string ToString()
+    {
+        return $"{this.Type} {this.Attribute}";
+    }
 }
 
+[JsonConverter(typeof(JsonStringEnumConverter<TokenType>))]
 public enum TokenType
 {
     Id,

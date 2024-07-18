@@ -1,0 +1,106 @@
+[
+  {
+    "Type": "Id",
+    "Attribute": "acc"
+  },
+  {
+    "Type": "Operator",
+    "Attribute": ":="
+  },
+  {
+    "Type": "Const",
+    "Attribute": "1"
+  },
+  {
+    "Type": "Semicolon",
+    "Attribute": null
+  },
+  {
+    "Type": "Id",
+    "Attribute": "n"
+  },
+  {
+    "Type": "Operator",
+    "Attribute": ":="
+  },
+  {
+    "Type": "Const",
+    "Attribute": "6"
+  },
+  {
+    "Type": "Semicolon",
+    "Attribute": null
+  },
+  {
+    "Type": "Keyword",
+    "Attribute": "while"
+  },
+  {
+    "Type": "LeftParenthesis",
+    "Attribute": null
+  },
+  {
+    "Type": "Id",
+    "Attribute": "n"
+  },
+  {
+    "Type": "RightParenthesis",
+    "Attribute": null
+  },
+  {
+    "Type": "Keyword",
+    "Attribute": "do"
+  },
+  {
+    "Type": "Id",
+    "Attribute": "acc"
+  },
+  {
+    "Type": "Operator",
+    "Attribute": ":="
+  },
+  {
+    "Type": "Id",
+    "Attribute": "acc"
+  },
+  {
+    "Type": "Operator",
+    "Attribute": "*"
+  },
+  {
+    "Type": "Id",
+    "Attribute": "n"
+  },
+  {
+    "Type": "Semicolon",
+    "Attribute": null
+  },
+  {
+    "Type": "Id",
+    "Attribute": "n"
+  },
+  {
+    "Type": "Operator",
+    "Attribute": ":="
+  },
+  {
+    "Type": "Id",
+    "Attribute": "n"
+  },
+  {
+    "Type": "Operator",
+    "Attribute": "-"
+  },
+  {
+    "Type": "Const",
+    "Attribute": "1"
+  },
+  {
+    "Type": "Semicolon",
+    "Attribute": null
+  },
+  {
+    "Type": "Keyword",
+    "Attribute": "done"
+  }
+]
