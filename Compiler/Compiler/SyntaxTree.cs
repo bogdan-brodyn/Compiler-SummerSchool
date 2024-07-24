@@ -8,25 +8,26 @@ namespace Compiler;
 
 public class SyntaxTree
 {
-    private readonly Token rootToken;
-    private readonly List<SyntaxTree> children;
-
     public SyntaxTree(Token rootToken, List<SyntaxTree>? children = null)
     {
-        this.rootToken = rootToken;
+        this.RootToken = rootToken;
         if (children == null)
         {
-            this.children = new List<SyntaxTree>();
+            this.Children = new List<SyntaxTree>();
         }
         else
         {
-            this.children = children;
+            this.Children = children;
         }
     }
 
     public SyntaxTree(Token rootToken, params SyntaxTree[] children)
     {
-        this.rootToken = rootToken;
-        this.children = new List<SyntaxTree>(children);
+        this.RootToken = rootToken;
+        this.Children = new List<SyntaxTree>(children);
     }
+
+    public Token RootToken { get; set; }
+
+    public List<SyntaxTree> Children { get; set; }
 }
