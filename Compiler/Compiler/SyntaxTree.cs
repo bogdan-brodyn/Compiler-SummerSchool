@@ -27,7 +27,7 @@ public class SyntaxTree
         this.Children = new List<SyntaxTree>(children);
     }
 
-    public Token RootToken { get; set; }
+    public Token RootToken { get; }
 
-    public List<SyntaxTree> Children { get; set; }
+    public List<SyntaxTree> Children { get; }
 }
