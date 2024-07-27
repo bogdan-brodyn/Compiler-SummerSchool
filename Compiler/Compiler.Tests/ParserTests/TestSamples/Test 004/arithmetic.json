@@ -19,100 +19,10 @@
         },
         {
           "RootToken": {
-            "Type": "Operator",
-            "Attribute": "-"
+            "Type": "Const",
+            "Attribute": "993"
           },
-          "Children": [
-            {
-              "RootToken": {
-                "Type": "Operator",
-                "Attribute": "/"
-              },
-              "Children": [
-                {
-                  "RootToken": {
-                    "Type": "Operator",
-                    "Attribute": "\u002B"
-                  },
-                  "Children": [
-                    {
-                      "RootToken": {
-                        "Type": "Const",
-                        "Attribute": "1"
-                      },
-                      "Children": []
-                    },
-                    {
-                      "RootToken": {
-                        "Type": "Const",
-                        "Attribute": "3"
-                      },
-                      "Children": []
-                    }
-                  ]
-                },
-                {
-                  "RootToken": {
-                    "Type": "Operator",
-                    "Attribute": "*"
-                  },
-                  "Children": [
-                    {
-                      "RootToken": {
-                        "Type": "Const",
-                        "Attribute": "1"
-                      },
-                      "Children": []
-                    },
-                    {
-                      "RootToken": {
-                        "Type": "Const",
-                        "Attribute": "2"
-                      },
-                      "Children": []
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "RootToken": {
-                "Type": "Operator",
-                "Attribute": "*"
-              },
-              "Children": [
-                {
-                  "RootToken": {
-                    "Type": "Const",
-                    "Attribute": "2"
-                  },
-                  "Children": []
-                },
-                {
-                  "RootToken": {
-                    "Type": "Operator",
-                    "Attribute": "/"
-                  },
-                  "Children": [
-                    {
-                      "RootToken": {
-                        "Type": "Const",
-                        "Attribute": "1"
-                      },
-                      "Children": []
-                    },
-                    {
-                      "RootToken": {
-                        "Type": "Const",
-                        "Attribute": "3"
-                      },
-                      "Children": []
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+          "Children": []
         }
       ]
     }
