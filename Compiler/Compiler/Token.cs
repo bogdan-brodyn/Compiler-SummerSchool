@@ -18,6 +18,8 @@ public class Token(TokenType type, string? attribute = null)
 
     public static Token While => new (TokenType.Keyword, "while");
 
+    public static Token Empty => new (TokenType.Empty);
+
     public TokenType Type { get; } = type;
 
     public string? Attribute { get; } = attribute;
@@ -38,4 +40,5 @@ public enum TokenType
     Semicolon,
     LeftParenthesis,
     RightParenthesis,
+    Empty,
 }

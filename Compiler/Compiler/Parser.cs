@@ -17,12 +17,12 @@ public class Parser
     {
         get
         {
-            if (this.position >= this.tokens.Count)
+            if (this.position < this.tokens.Count)
             {
-                throw new InvalidDataException("Invalid syntax");
+                return this.tokens[this.position];
             }
 
-            return this.tokens[this.position];
+            return Token.Empty;
         }
     }
 
@@ -31,7 +31,7 @@ public class Parser
         var (program, errorOccured) = this.ParseStatements();
         if (errorOccured)
         {
-            throw new InvalidDataException("Invalid syntax: id or keyword expected");
+            throw new InvalidDataException(this.GetErrorMessage("id or keyword"));
         }
 
         return program;
@@ -88,13 +88,13 @@ public class Parser
         ++this.position;
         if (!this.CurrentTokenIsOperator(":="))
         {
-            throw new InvalidDataException("Invalid syntax: ':=' expected");
+            throw new InvalidDataException(this.GetErrorMessage(":="));
         }
 
         var expressionTree = this.ParseExpression();
         if (this.CurrentToken.Type != TokenType.Semicolon)
         {
-            throw new InvalidDataException("Invalid syntax: ';' expected");
+            throw new InvalidDataException(this.GetErrorMessage(";"));
         }
 
         ++this.position;
@@ -106,7 +106,7 @@ public class Parser
         var conditionTree = this.ParseCondition();
         if (!this.CurrentTokenIsKeyword("then"))
         {
-            throw new InvalidDataException("Invalid syntax: 'then' expected");
+            throw new InvalidDataException(this.GetErrorMessage("then"));
         }
 
         ++this.position;
@@ -125,14 +125,14 @@ public class Parser
         var conditionTree = this.ParseCondition();
         if (!this.CurrentTokenIsKeyword("do"))
         {
-            throw new InvalidDataException("Invalid syntax: 'do' expected");
+            throw new InvalidDataException(this.GetErrorMessage("do"));
         }
 
         ++this.position;
         var (doTree, _) = this.ParseStatements();
         if (!this.CurrentTokenIsKeyword("done"))
         {
-            throw new InvalidDataException("Invalid syntax: 'done' expected");
+            throw new InvalidDataException(this.GetErrorMessage("done"));
         }
 
         ++this.position;
@@ -144,7 +144,7 @@ public class Parser
         ++this.position;
         if (this.CurrentToken.Type != TokenType.LeftParenthesis)
         {
-            throw new InvalidDataException("Invalid syntax: '(' expected");
+            throw new InvalidDataException(this.GetErrorMessage("("));
         }
 
         return this.ParseParExpression();
@@ -161,7 +161,7 @@ public class Parser
 
         if (!this.CurrentTokenIsKeyword("fi"))
         {
-            throw new InvalidDataException("Invalid syntax: 'fi' expected");
+            throw new InvalidDataException(this.GetErrorMessage("fi"));
         }
 
         ++this.position;
@@ -189,7 +189,7 @@ public class Parser
         }
         else
         {
-            throw new InvalidDataException("Invalid syntax: const or id expected");
+            throw new InvalidDataException(this.GetErrorMessage("const or id"));
         }
 
         return makeRecursiveCall ? this.ParseTermExtra(operand) : operand;
@@ -226,7 +226,7 @@ public class Parser
         var expressionTree = this.ParseExpression();
         if (this.CurrentToken.Type != TokenType.RightParenthesis)
         {
-            throw new InvalidDataException("Invalid syntax: ')' expected");
+            throw new InvalidDataException(this.GetErrorMessage(")"));
         }
 
         ++this.position;
@@ -298,4 +298,7 @@ public class Parser
     private bool CurrentTokenIsConstOrId()
         => this.CurrentToken.Type == TokenType.Const ||
            this.CurrentToken.Type == TokenType.Id;
+
+    private string GetErrorMessage(string expectedToken)
+        => $"Invalid syntax: {expectedToken} expected, but got {this.CurrentToken}";
 }
