@@ -201,7 +201,7 @@ public class Parser
         {
             var operation = this.CurrentToken;
             var rightOperand = this.ParseTerm(true);
-            leftOperand = this.GetExpressionTree(operation, leftOperand, rightOperand);
+            leftOperand = new SyntaxTree(operation, leftOperand, rightOperand);
             return this.ParseExpressionExtra(leftOperand);
         }
 
@@ -214,7 +214,7 @@ public class Parser
         {
             var operation = this.CurrentToken;
             var rightOperand = this.ParseTerm(false);
-            leftOperand = this.GetExpressionTree(operation, leftOperand, rightOperand);
+            leftOperand = new SyntaxTree(operation, leftOperand, rightOperand);
             return this.ParseTermExtra(leftOperand);
         }
 
@@ -231,60 +231,6 @@ public class Parser
 
         ++this.position;
         return expressionTree;
-    }
-
-    private SyntaxTree GetExpressionTree(
-        Token operation, SyntaxTree leftOperand, SyntaxTree rightOperand)
-    {
-        var leftToken = leftOperand.RootToken;
-        var rightToken = rightOperand.RootToken;
-        if (leftToken.Type == TokenType.Const && rightToken.Type == TokenType.Const)
-        {
-            var resultToken = this.GetResultToken(operation, leftToken, rightToken);
-            return new SyntaxTree(resultToken);
-        }
-
-        return new SyntaxTree(operation, leftOperand, rightOperand);
-    }
-
-    private Token GetResultToken(
-        Token operation, Token leftOperand, Token rightOperand)
-    {
-        Func<int, int, int> method;
-        switch (operation.Attribute)
-        {
-            case "+":
-                method = (x, y) => x + y;
-                break;
-            case "-":
-                method = (x, y) => x - y;
-                break;
-            case "*":
-                method = (x, y) => x * y;
-                break;
-            case "/":
-                method = (x, y) => x / y;
-                break;
-            default:
-                throw new ArgumentException("Unknown operation");
-        }
-
-        return new Token(
-            TokenType.Const,
-            this.GetResultOfOperation(leftOperand, rightOperand, method));
-    }
-
-    private string GetResultOfOperation(
-        Token leftOperand, Token rightOperand, Func<int, int, int> method)
-    {
-        var parsedLeft = int.TryParse(leftOperand.Attribute, out int number1);
-        var parsedRight = int.TryParse(rightOperand.Attribute, out int number2);
-        if (!parsedLeft || !parsedRight)
-        {
-            throw new ArgumentException("Failed to parse const token attribute");
-        }
-
-        return method(number1, number2).ToString();
     }
 
     private string GetErrorMessage(string expectedToken)

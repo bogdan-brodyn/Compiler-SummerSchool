@@ -27,9 +27,9 @@ public class SyntaxTree
         this.Children = new List<SyntaxTree>(children);
     }
 
-    public Token RootToken { get; }
+    public Token RootToken { get; private set; }
 
-    public List<SyntaxTree> Children { get; }
+    public List<SyntaxTree> Children { get; private set; }
 
     private SyntaxTree LeftChild
     {
@@ -173,6 +173,54 @@ public class SyntaxTree
 
     private void OptimizeExpression(Dictionary<string, string> idValues)
     {
-        throw new NotImplementedException();
+        if (this.RootToken.IsConstOrId())
+        {
+            this.SubstituteConstValue(idValues);
+            return;
+        }
+
+        this.LeftChild.OptimizeExpression(idValues);
+        this.RightChild.OptimizeExpression(idValues);
+
+        if (this.LeftChild.RootToken.Type == TokenType.Const &&
+            this.RightChild.RootToken.Type == TokenType.Const)
+        {
+            this.RootToken = this.GetResultToken(
+                this.LeftChild.RootToken, this.RightChild.RootToken);
+            this.Children.Clear();
+        }
+    }
+
+    private void SubstituteConstValue(Dictionary<string, string> idValues)
+    {
+        if (this.RootToken.Type == TokenType.Id)
+        {
+            string id = this.RootToken.Attribute ?? throw new InvalidOperationException();
+            bool idFound = idValues.TryGetValue(id, out string? value);
+            if (idFound)
+            {
+                this.RootToken = new Token(TokenType.Const, value);
+            }
+        }
+    }
+
+    private Token GetResultToken(Token leftOperand, Token rightOperand)
+    {
+        int leftNumber = leftOperand.ParseConstAttribute();
+        int rightNumber = rightOperand.ParseConstAttribute();
+        int result = this.GetResultOfOperation(leftNumber, rightNumber);
+        return new Token(TokenType.Const, result.ToString());
+    }
+
+    private int GetResultOfOperation(int leftOperand, int rightOperand)
+    {
+        return this.RootToken.Attribute switch
+        {
+            "+" => leftOperand + rightOperand,
+            "-" => leftOperand - rightOperand,
+            "*" => leftOperand * rightOperand,
+            "/" => leftOperand / rightOperand,
+            _ => throw new InvalidOperationException("Unknown operation"),
+        };
     }
 }
