@@ -28,6 +28,28 @@ public class Token(TokenType type, string? attribute = null)
     {
         return $"{this.Type} {this.Attribute}";
     }
+
+    public int ParseConstAttribute()
+    {
+        if (this.Type != TokenType.Const || this.Attribute == null)
+        {
+            throw new InvalidOperationException();
+        }
+
+        return int.Parse(this.Attribute);
+    }
+
+    public bool IsKeyword(string keyword)
+        => this.Type == TokenType.Keyword &&
+           this.Attribute == keyword;
+
+    public bool IsOperator(string op)
+        => this.Type == TokenType.Operator &&
+           this.Attribute == op;
+
+    public bool IsConstOrId()
+        => this.Type == TokenType.Const ||
+           this.Type == TokenType.Id;
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter<TokenType>))]

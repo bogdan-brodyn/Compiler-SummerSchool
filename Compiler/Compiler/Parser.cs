@@ -70,11 +70,11 @@ public class Parser
         {
             return this.ParseAssignment();
         }
-        else if (this.CurrentTokenIsKeyword("if"))
+        else if (this.CurrentToken.IsKeyword("if"))
         {
             return this.ParseIf();
         }
-        else if (this.CurrentTokenIsKeyword("while"))
+        else if (this.CurrentToken.IsKeyword("while"))
         {
             return this.ParseWhile();
         }
@@ -86,15 +86,15 @@ public class Parser
     {
         var idTree = new SyntaxTree(this.CurrentToken);
         ++this.position;
-        if (!this.CurrentTokenIsOperator(":="))
+        if (!this.CurrentToken.IsOperator(":="))
         {
-            throw new InvalidDataException(this.GetErrorMessage(":="));
+            throw new InvalidDataException(this.GetErrorMessage("':='"));
         }
 
         var expressionTree = this.ParseExpression();
         if (this.CurrentToken.Type != TokenType.Semicolon)
         {
-            throw new InvalidDataException(this.GetErrorMessage(";"));
+            throw new InvalidDataException(this.GetErrorMessage("';'"));
         }
 
         ++this.position;
@@ -104,9 +104,9 @@ public class Parser
     private SyntaxTree ParseIf()
     {
         var conditionTree = this.ParseCondition();
-        if (!this.CurrentTokenIsKeyword("then"))
+        if (!this.CurrentToken.IsKeyword("then"))
         {
-            throw new InvalidDataException(this.GetErrorMessage("then"));
+            throw new InvalidDataException(this.GetErrorMessage("'then'"));
         }
 
         ++this.position;
@@ -123,16 +123,16 @@ public class Parser
     private SyntaxTree ParseWhile()
     {
         var conditionTree = this.ParseCondition();
-        if (!this.CurrentTokenIsKeyword("do"))
+        if (!this.CurrentToken.IsKeyword("do"))
         {
-            throw new InvalidDataException(this.GetErrorMessage("do"));
+            throw new InvalidDataException(this.GetErrorMessage("'do'"));
         }
 
         ++this.position;
         var (doTree, _) = this.ParseStatements();
-        if (!this.CurrentTokenIsKeyword("done"))
+        if (!this.CurrentToken.IsKeyword("done"))
         {
-            throw new InvalidDataException(this.GetErrorMessage("done"));
+            throw new InvalidDataException(this.GetErrorMessage("'done'"));
         }
 
         ++this.position;
@@ -144,7 +144,7 @@ public class Parser
         ++this.position;
         if (this.CurrentToken.Type != TokenType.LeftParenthesis)
         {
-            throw new InvalidDataException(this.GetErrorMessage("("));
+            throw new InvalidDataException(this.GetErrorMessage("'('"));
         }
 
         return this.ParseParExpression();
@@ -153,15 +153,15 @@ public class Parser
     private SyntaxTree? ParseElse()
     {
         SyntaxTree? elseTree = null;
-        if (this.CurrentTokenIsKeyword("else"))
+        if (this.CurrentToken.IsKeyword("else"))
         {
             ++this.position;
             (elseTree, _) = this.ParseStatements();
         }
 
-        if (!this.CurrentTokenIsKeyword("fi"))
+        if (!this.CurrentToken.IsKeyword("fi"))
         {
-            throw new InvalidDataException(this.GetErrorMessage("fi"));
+            throw new InvalidDataException(this.GetErrorMessage("'fi'"));
         }
 
         ++this.position;
@@ -182,7 +182,7 @@ public class Parser
         {
             operand = this.ParseParExpression();
         }
-        else if (this.CurrentTokenIsConstOrId())
+        else if (this.CurrentToken.IsConstOrId())
         {
             operand = new SyntaxTree(this.CurrentToken);
             ++this.position;
@@ -197,7 +197,7 @@ public class Parser
 
     private SyntaxTree ParseExpressionExtra(SyntaxTree leftOperand)
     {
-        if (this.CurrentTokenIsOperator("+") || this.CurrentTokenIsOperator("-"))
+        if (this.CurrentToken.IsOperator("+") || this.CurrentToken.IsOperator("-"))
         {
             var operation = this.CurrentToken;
             var rightOperand = this.ParseTerm(true);
@@ -210,7 +210,7 @@ public class Parser
 
     private SyntaxTree ParseTermExtra(SyntaxTree leftOperand)
     {
-        if (this.CurrentTokenIsOperator("*") || this.CurrentTokenIsOperator("/"))
+        if (this.CurrentToken.IsOperator("*") || this.CurrentToken.IsOperator("/"))
         {
             var operation = this.CurrentToken;
             var rightOperand = this.ParseTerm(false);
@@ -226,7 +226,7 @@ public class Parser
         var expressionTree = this.ParseExpression();
         if (this.CurrentToken.Type != TokenType.RightParenthesis)
         {
-            throw new InvalidDataException(this.GetErrorMessage(")"));
+            throw new InvalidDataException(this.GetErrorMessage("')'"));
         }
 
         ++this.position;
@@ -286,18 +286,6 @@ public class Parser
 
         return method(number1, number2).ToString();
     }
-
-    private bool CurrentTokenIsKeyword(string keyword)
-        => this.CurrentToken.Type == TokenType.Keyword &&
-           this.CurrentToken.Attribute == keyword;
-
-    private bool CurrentTokenIsOperator(string op)
-        => this.CurrentToken.Type == TokenType.Operator &&
-           this.CurrentToken.Attribute == op;
-
-    private bool CurrentTokenIsConstOrId()
-        => this.CurrentToken.Type == TokenType.Const ||
-           this.CurrentToken.Type == TokenType.Id;
 
     private string GetErrorMessage(string expectedToken)
         => $"Invalid syntax: {expectedToken} expected, but got {this.CurrentToken}";
