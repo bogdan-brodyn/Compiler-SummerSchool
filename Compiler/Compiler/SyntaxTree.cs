@@ -71,26 +71,30 @@ public class SyntaxTree
         for (int i = 0; i < this.Children.Count; ++i)
         {
             var statementTree = this.Children[i];
-            if (statementTree.RootToken.IsOperator(":="))
-            {
-                statementTree.OptimizeAssignment(idValues);
-            }
-            else if (statementTree.RootToken.IsKeyword("if"))
-            {
-                var (replaceStatement, statementsToInsert) = statementTree.OptimizeIf(idValues);
-                this.ReplaceStatementAfterOptimization(
-                    replaceStatement, statementsToInsert, idValues, ref i);
-            }
-            else if (statementTree.RootToken.IsKeyword("while"))
-            {
-                var removeStatement = statementTree.OptimizeWhile(idValues);
-                this.ReplaceStatementAfterOptimization(
-                    removeStatement, null, idValues, ref i);
-            }
+            var optimizationData = statementTree.OptimizeStatement(idValues);
+            this.OptimizeUsingData(optimizationData, idValues, ref i);
         }
     }
 
-    private void OptimizeAssignment(Dictionary<string, string> idValues)
+    private OptimizationData OptimizeStatement(Dictionary<string, string> idValues)
+    {
+        if (this.RootToken.IsOperator(":="))
+        {
+            return this.OptimizeAssignment(idValues);
+        }
+        else if (this.RootToken.IsKeyword("if"))
+        {
+            return this.OptimizeIf();
+        }
+        else if (this.RootToken.IsKeyword("while"))
+        {
+            return this.OptimizeWhile();
+        }
+
+        throw new InvalidOperationException("Unexpected token");
+    }
+
+    private OptimizationData OptimizeAssignment(Dictionary<string, string> idValues)
     {
         var idTree = this.LeftChild;
         var expressionTree = this.RightChild;
@@ -103,15 +107,17 @@ public class SyntaxTree
             string value = expressionTree.RootToken.Attribute ?? throw new InvalidOperationException();
             idValues[id] = value;
         }
+
+        return new OptimizationData(Optimization.None, null);
     }
 
-    private (bool, List<SyntaxTree>?) OptimizeIf(Dictionary<string, string> idValues)
+    private OptimizationData OptimizeIf()
     {
         var conditionTree = this.Children[0];
         var thenTree = this.Children[1];
         var elseTree = this.Children.Count == 3 ? this.Children[2] : null;
 
-        conditionTree.OptimizeExpression(idValues);
+        conditionTree.OptimizeExpression(null);
         thenTree.Optimize();
         elseTree?.Optimize();
 
@@ -120,58 +126,70 @@ public class SyntaxTree
             int value = conditionTree.RootToken.ParseConstAttribute();
             if (value > 0)
             {
-                return (true, thenTree.Children);
+                return new OptimizationData(Optimization.ReplaceStatement, thenTree.Children);
             }
 
-            return (true, elseTree?.Children);
+            return new OptimizationData(Optimization.ReplaceStatement, elseTree?.Children);
         }
 
-        return (false, null);
+        return new OptimizationData(Optimization.ClearIdValues, null);
     }
 
-    private bool OptimizeWhile(Dictionary<string, string> idValues)
+    private OptimizationData OptimizeWhile()
     {
         var conditionTree = this.Children[0];
         var doTree = this.Children[1];
 
-        conditionTree.OptimizeExpression(idValues);
+        conditionTree.OptimizeExpression(null);
         doTree.Optimize();
 
         if (conditionTree.RootToken.Type == TokenType.Const)
         {
             int value = conditionTree.RootToken.ParseConstAttribute();
-            if (value <= 0)
+            if (value > 0)
             {
-                return true;
+                return new OptimizationData(Optimization.RemoveFollowingStatements, null);
             }
+
+            return new OptimizationData(Optimization.ReplaceStatement, null);
         }
 
-        return false;
+        return new OptimizationData(Optimization.ClearIdValues, null);
     }
 
-    private void ReplaceStatementAfterOptimization(
-        bool replaceStatement,
-        List<SyntaxTree>? statementsToInsert,
+    private void OptimizeUsingData(
+        OptimizationData data,
         Dictionary<string, string> idValues,
         ref int position)
     {
-        if (replaceStatement)
+        switch (data.Optimization)
         {
-            this.Children.RemoveAt(position);
-            if (statementsToInsert != null)
-            {
-                this.Children.InsertRange(position, statementsToInsert);
-            }
-
-            --position;
-        }
-        else
-        {
-            idValues.Clear();
+            case Optimization.None:
+                return;
+            case Optimization.ClearIdValues:
+                idValues.Clear();
+                return;
+            case Optimization.ReplaceStatement:
+                this.ReplaceStatement(data.StatementsToInsert, ref position);
+                return;
+            case Optimization.RemoveFollowingStatements:
+                this.Children.RemoveRange(position + 1, this.Children.Count);
+                return;
         }
     }
 
-    private void OptimizeExpression(Dictionary<string, string> idValues)
+    private void ReplaceStatement(List<SyntaxTree>? statementsToInsert, ref int position)
+    {
+        this.Children.RemoveAt(position);
+        if (statementsToInsert != null)
+        {
+            this.Children.InsertRange(position, statementsToInsert);
+        }
+
+        --position;
+    }
+
+    private void OptimizeExpression(Dictionary<string, string>? idValues)
     {
         if (this.RootToken.IsConstOrId())
         {
@@ -191,9 +209,9 @@ public class SyntaxTree
         }
     }
 
-    private void SubstituteConstValue(Dictionary<string, string> idValues)
+    private void SubstituteConstValue(Dictionary<string, string>? idValues)
     {
-        if (this.RootToken.Type == TokenType.Id)
+        if (this.RootToken.Type == TokenType.Id && idValues != null)
         {
             string id = this.RootToken.Attribute ?? throw new InvalidOperationException();
             bool idFound = idValues.TryGetValue(id, out string? value);
@@ -223,4 +241,19 @@ public class SyntaxTree
             _ => throw new InvalidOperationException("Unknown operation"),
         };
     }
+
+    private class OptimizationData(Optimization optimization, List<SyntaxTree>? statementsToInsert)
+    {
+        public Optimization Optimization { get; } = optimization;
+
+        public List<SyntaxTree>? StatementsToInsert { get; } = statementsToInsert;
+    }
+}
+
+public enum Optimization
+{
+    None,
+    ClearIdValues,
+    ReplaceStatement,
+    RemoveFollowingStatements,
 }
