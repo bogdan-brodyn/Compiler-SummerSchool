@@ -65,6 +65,9 @@ public class SyntaxTree
         }
     }
 
+    private static bool TreeHasNoStatements(SyntaxTree? tree)
+        => tree == null || tree.Children.Count == 0;
+
     private void OptimizeStatements()
     {
         var idValues = new Dictionary<string, string>();
@@ -84,7 +87,7 @@ public class SyntaxTree
         }
         else if (this.RootToken.IsKeyword("if"))
         {
-            return this.OptimizeIf();
+            return this.OptimizeIf(idValues);
         }
         else if (this.RootToken.IsKeyword("while"))
         {
@@ -111,15 +114,20 @@ public class SyntaxTree
         return new OptimizationData(Optimization.None, null);
     }
 
-    private OptimizationData OptimizeIf()
+    private OptimizationData OptimizeIf(Dictionary<string, string> idValues)
     {
         var conditionTree = this.Children[0];
         var thenTree = this.Children[1];
         var elseTree = this.Children.Count == 3 ? this.Children[2] : null;
 
-        conditionTree.OptimizeExpression(null);
+        conditionTree.OptimizeExpression(idValues);
         thenTree.Optimize();
         elseTree?.Optimize();
+
+        if (TreeHasNoStatements(thenTree) && TreeHasNoStatements(elseTree))
+        {
+            return new OptimizationData(Optimization.ReplaceStatement, null);
+        }
 
         if (conditionTree.RootToken.Type == TokenType.Const)
         {
@@ -142,6 +150,11 @@ public class SyntaxTree
 
         conditionTree.OptimizeExpression(null);
         doTree.Optimize();
+
+        if (TreeHasNoStatements(doTree))
+        {
+            return new OptimizationData(Optimization.ReplaceStatement, null);
+        }
 
         if (conditionTree.RootToken.Type == TokenType.Const)
         {
@@ -193,7 +206,7 @@ public class SyntaxTree
     {
         if (this.RootToken.IsConstOrId())
         {
-            this.SubstituteConstValue(idValues);
+            this.SubstituteWithConstValue(idValues);
             return;
         }
 
@@ -209,7 +222,7 @@ public class SyntaxTree
         }
     }
 
-    private void SubstituteConstValue(Dictionary<string, string>? idValues)
+    private void SubstituteWithConstValue(Dictionary<string, string>? idValues)
     {
         if (this.RootToken.Type == TokenType.Id && idValues != null)
         {
