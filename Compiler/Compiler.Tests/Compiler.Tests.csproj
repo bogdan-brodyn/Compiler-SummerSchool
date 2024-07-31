@@ -42,7 +42,85 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="OptimizationTests\TestSamples\Test 001\arithmetic.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 001\arithmeticOptimized.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 002\constAssignments.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 002\constAssignmentsOptimized.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 003\constIfConditions.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 003\constIfConditionsOptimized.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 004\constWhileConditions.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 004\constWhileConditionsOptimized.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 005\emptyIfAndWhile.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 005\emptyIfAndWhileOptimized.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 006\nestedStatements.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 006\nestedStatementsOptimized.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 007\unknownConditions.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 007\unknownConditionsOptimized.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 008\binpoisk.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 008\binpoiskOptimized.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 009\empty.txt" />
+    <None Remove="OptimizationTests\TestSamples\Test 009\emptyOptimized.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="OptimizationTests\TestSamples\Test 001\arithmeticOptimized.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 001\arithmetic.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 002\constAssignmentsOptimized.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 002\constAssignments.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 003\constIfConditions.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 003\constIfConditionsOptimized.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 004\constWhileConditionsOptimized.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 004\constWhileConditions.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 005\emptyIfAndWhileOptimized.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 005\emptyIfAndWhile.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 006\nestedStatementsOptimized.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 006\nestedStatements.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 007\unknownConditionsOptimized.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 007\unknownConditions.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 008\binpoiskOptimized.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 008\binpoisk.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 009\emptyOptimized.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OptimizationTests\TestSamples\Test 009\empty.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

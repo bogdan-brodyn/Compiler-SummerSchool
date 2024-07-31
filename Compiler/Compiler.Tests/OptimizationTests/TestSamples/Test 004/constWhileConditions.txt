@@ -1,0 +1,15 @@
+sum := 34 + 21;
+
+while (0) do
+  if (sum) then
+    sum := 0;
+  fi
+done
+
+while (1) do
+  sum := sum - 1;
+done
+  
+while (sum) do
+  a := sum / 2;
+done

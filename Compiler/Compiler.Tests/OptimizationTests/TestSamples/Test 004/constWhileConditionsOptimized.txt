@@ -1,0 +1,5 @@
+sum := 55;
+
+while (1) do
+  sum := sum - 1;
+done

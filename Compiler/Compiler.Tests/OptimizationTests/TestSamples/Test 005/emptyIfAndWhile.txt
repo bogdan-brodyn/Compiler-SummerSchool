@@ -1,0 +1,11 @@
+ololo := 64;
+
+if (ololo) then
+fi
+
+if (7777) then
+else
+fi
+
+while (ololo / 2) do
+done

@@ -1,0 +1,19 @@
+yeye := 1001;
+
+while (yeye) do
+
+  a := 99;
+  b := yeye + 99;
+
+  if (b) then
+    while (1) do
+      b := b - 1;
+    done
+  else
+    a := b;
+  fi
+
+  yeye := yeye - 1;
+  c := a - b;
+
+done

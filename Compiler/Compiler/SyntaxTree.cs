@@ -186,7 +186,7 @@ public class SyntaxTree
                 this.ReplaceStatement(data.StatementsToInsert, ref position);
                 return;
             case Optimization.RemoveFollowingStatements:
-                this.Children.RemoveRange(position + 1, this.Children.Count);
+                this.Children.RemoveRange(position + 1, this.Children.Count - position - 1);
                 return;
         }
     }
