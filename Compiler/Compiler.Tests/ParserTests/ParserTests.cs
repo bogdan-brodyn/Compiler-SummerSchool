@@ -27,7 +27,7 @@ public class ParserTests
     public void Test(string text, string expectedJson, string testName)
     {
         var tokens = Lexer.Analyze(text);
-        var ast = new Parser(tokens).Parse();
+        var ast = Parser.Parse(tokens);
         var options = new JsonSerializerOptions() { WriteIndented = true };
         var actualJson = JsonSerializer.Serialize(ast, options);
         Assert.That(actualJson, Is.EqualTo(expectedJson), $"Test: {testName} failed!");

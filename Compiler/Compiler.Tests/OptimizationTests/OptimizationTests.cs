@@ -26,8 +26,8 @@ public class OptimizationTests
     [TestCaseSource(nameof(Sample))]
     public void Test(string sourceCode, string optimizedCode, string testName)
     {
-        var actualTree = new Parser(Lexer.Analyze(sourceCode)).Parse();
-        var expectedTree = new Parser(Lexer.Analyze(optimizedCode)).Parse();
+        var actualTree = Parser.Parse(Lexer.Analyze(sourceCode));
+        var expectedTree = Parser.Parse(Lexer.Analyze(optimizedCode));
         actualTree.Optimize();
 
         var options = new JsonSerializerOptions() { WriteIndented = true };

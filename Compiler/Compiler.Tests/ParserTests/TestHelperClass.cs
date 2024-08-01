@@ -31,7 +31,7 @@ public static class TestHelperClass
             try
             {
                 var tokens = Lexer.Analyze(File.ReadAllText(f));
-                SyntaxTree ast = new Parser(tokens).Parse();
+                SyntaxTree ast = Parser.Parse(tokens);
 
                 var json = JsonSerializer.Serialize(ast, new JsonSerializerOptions() { WriteIndented = true });
                 var jsonPath = Path.ChangeExtension(f, "json");
