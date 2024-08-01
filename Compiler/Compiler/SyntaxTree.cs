@@ -27,6 +27,14 @@ public class SyntaxTree
         this.Children = new List<SyntaxTree>(children);
     }
 
+    private enum Optimization
+    {
+        None,
+        ClearIdValues,
+        ReplaceStatement,
+        RemoveFollowingStatements,
+    }
+
     public Token RootToken { get; private set; }
 
     public List<SyntaxTree> Children { get; private set; }
@@ -261,12 +269,4 @@ public class SyntaxTree
 
         public List<SyntaxTree>? StatementsToInsert { get; } = statementsToInsert;
     }
-}
-
-public enum Optimization
-{
-    None,
-    ClearIdValues,
-    ReplaceStatement,
-    RemoveFollowingStatements,
 }
