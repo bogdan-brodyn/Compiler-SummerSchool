@@ -60,8 +60,10 @@ public static class AssemblerCodeGenerator
         {
             GenerateWhileCode(syntaxTree);
         }
-
-        throw new Exception();
+        else
+        {
+            throw new Exception();
+        }
     }
 
     private static void GenerateExpressionCode(string register, SyntaxTree syntaxTree)
@@ -151,8 +153,8 @@ public static class AssemblerCodeGenerator
 
     private static void GenerateIfCode(SyntaxTree syntaxTree)
     {
-        GenerateExpressionCode("x1", syntaxTree.Children[0]);
-        WriteLine($"BLTU x1, zero, else{ifOperatorCounter}");
+        GenerateExpressionCode("t1", syntaxTree.Children[0]);
+        WriteLine($"BLT t1, zero, else{ifOperatorCounter}");
         WriteLine($"then{ifOperatorCounter}:");
         ++nestingCounter;
         GenerateStatementsCode(syntaxTree.Children[1]);
@@ -170,8 +172,8 @@ public static class AssemblerCodeGenerator
     {
         WriteLine($"loop{whileOperatorCounter}:");
         ++nestingCounter;
-        GenerateExpressionCode("x1", syntaxTree.Children[0]);
-        WriteLine($"BLTU x1, zero, done{whileOperatorCounter}");
+        GenerateExpressionCode("t1", syntaxTree.Children[0]);
+        WriteLine($"BLT t1, zero, done{whileOperatorCounter}");
         GenerateStatementsCode(syntaxTree.Children[1]);
         WriteLine($"JAL zero, loop{whileOperatorCounter}");
         --nestingCounter;
