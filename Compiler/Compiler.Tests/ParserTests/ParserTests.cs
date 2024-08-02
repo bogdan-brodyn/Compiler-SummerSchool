@@ -10,26 +10,44 @@ using System.Text.Json;
 
 public class ParserTests
 {
-    private const string SamplesPath = "ParserTests/TestSamples";
+    private const string CorrectSamplesPath = "ParserTests/TestSamples/Correct";
+    private const string IncorrectSamplesPath = "ParserTests/TestSamples/Incorrect";
 
-    public static IEnumerable<TestCaseData> Sample()
+    public static IEnumerable<TestCaseData> CorrectTestCases()
     {
-        foreach (var dir in Directory.EnumerateDirectories(SamplesPath))
+        foreach (var dir in Directory.EnumerateDirectories(CorrectSamplesPath))
         {
             var sampleFiles = Directory.GetFiles(dir);
             var text = File.ReadAllText(sampleFiles.First(file => file.EndsWith(".txt")));
-            var jsonString = File.ReadAllText(sampleFiles.First(file => file.EndsWith(".json")));
-            yield return new TestCaseData(text, jsonString, Path.GetFileName(dir));
+            var expectedJson = File.ReadAllText(sampleFiles.First(file => file.EndsWith(".json")));
+            yield return new TestCaseData(text, expectedJson, Path.GetFileName(dir));
         }
     }
 
-    [TestCaseSource(nameof(Sample))]
-    public void Test(string text, string expectedJson, string testName)
+    public static IEnumerable<TestCaseData> IncorrectTestCases()
+    {
+        foreach (var dir in Directory.EnumerateDirectories(IncorrectSamplesPath))
+        {
+            var sampleFiles = Directory.GetFiles(dir);
+            var text = File.ReadAllText(sampleFiles.First(file => file.EndsWith(".txt")));
+            yield return new TestCaseData(text, Path.GetFileName(dir));
+        }
+    }
+
+    [TestCaseSource(nameof(CorrectTestCases))]
+    public void Test_CorrectCases(string text, string expectedJson, string testName)
     {
         var tokens = Lexer.Analyze(text);
         var ast = Parser.Parse(tokens);
         var options = new JsonSerializerOptions() { WriteIndented = true };
         var actualJson = JsonSerializer.Serialize(ast, options);
         Assert.That(actualJson, Is.EqualTo(expectedJson), $"Test: {testName} failed!");
+    }
+
+    [TestCaseSource(nameof(IncorrectTestCases))]
+    public void Test_IncorrectCases(string text, string testName)
+    {
+        var tokens = Lexer.Analyze(text);
+        Assert.Throws<InvalidDataException>(() => Parser.Parse(tokens), $"Test: {testName} failed!");
     }
 }

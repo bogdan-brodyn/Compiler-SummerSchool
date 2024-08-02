@@ -10,11 +10,12 @@ using System.Text.Json;
 
 public class LexerTests
 {
-    private const string SamplesPath = "LexerTests/TestSamples";
+    private const string CorrectSamplesPath = "LexerTests/TestSamples/Correct";
+    private const string IncorrectSamplesPath = "LexerTests/TestSamples/Incorrect";
 
-    public static IEnumerable<TestCaseData> Sample()
+    public static IEnumerable<TestCaseData> CorrectTestCases()
     {
-        foreach (var dir in Directory.EnumerateDirectories(SamplesPath))
+        foreach (var dir in Directory.EnumerateDirectories(CorrectSamplesPath))
         {
             var sampleFiles = Directory.GetFiles(dir);
             var text = File.ReadAllText(sampleFiles.First(file => file.EndsWith(".txt")));
@@ -23,12 +24,28 @@ public class LexerTests
         }
     }
 
-    [TestCaseSource(nameof(Sample))]
-    public void Test(string text, string expectedJson, string testName)
+    public static IEnumerable<TestCaseData> IncorrectTestCases()
+    {
+        foreach (var dir in Directory.EnumerateDirectories(IncorrectSamplesPath))
+        {
+            var sampleFiles = Directory.GetFiles(dir);
+            var text = File.ReadAllText(sampleFiles.First(file => file.EndsWith(".txt")));
+            yield return new TestCaseData(text, Path.GetFileName(dir));
+        }
+    }
+
+    [TestCaseSource(nameof(CorrectTestCases))]
+    public void Test_CorrectCases(string text, string expectedJson, string testName)
     {
         var tokens = Lexer.Analyze(text);
         var options = new JsonSerializerOptions() { WriteIndented = true };
         var actualJson = JsonSerializer.Serialize(tokens, options);
         Assert.That(actualJson, Is.EqualTo(expectedJson), $"Test: {testName} failed!");
+    }
+
+    [TestCaseSource(nameof(IncorrectTestCases))]
+    public void Test_IncorrectCases(string text, string testName)
+    {
+        Assert.Throws<InvalidDataException>(() => Lexer.Analyze(text), $"Test: {testName} failed!");
     }
 }
