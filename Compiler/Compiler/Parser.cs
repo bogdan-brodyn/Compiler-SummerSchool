@@ -10,6 +10,7 @@ public static class Parser
 {
     private static List<Token> tokensToParse = new ();
     private static int position;
+    private static int currentLine;
 
     private static Token CurrentToken
     {
@@ -17,7 +18,9 @@ public static class Parser
         {
             if (position < tokensToParse.Count)
             {
-                return tokensToParse[position];
+                var token = tokensToParse[position];
+                currentLine = token.Line;
+                return token;
             }
 
             return Token.Empty;
@@ -27,7 +30,7 @@ public static class Parser
     public static SyntaxTree Parse(List<Token> tokens)
     {
         tokensToParse = tokens;
-        position = 0;
+        (position, currentLine) = (0, 0);
 
         var (program, errorOccured) = ParseStatements();
         if (errorOccured)
@@ -235,5 +238,5 @@ public static class Parser
     }
 
     private static string GetErrorMessage(string expectedToken)
-        => $"Invalid syntax: {expectedToken} expected, but got {CurrentToken}";
+        => $"Line ({currentLine})\nInvalid syntax: {expectedToken} expected, but got {CurrentToken}";
 }

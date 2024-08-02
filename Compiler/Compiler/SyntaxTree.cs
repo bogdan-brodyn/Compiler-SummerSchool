@@ -238,7 +238,7 @@ public class SyntaxTree
             bool idFound = idValues.TryGetValue(id, out string? value);
             if (idFound)
             {
-                this.RootToken = new Token(TokenType.Const, value);
+                this.RootToken = new Token(TokenType.Const, this.RootToken.Line, value);
             }
         }
     }
@@ -248,7 +248,7 @@ public class SyntaxTree
         int leftNumber = leftOperand.ParseConstAttribute();
         int rightNumber = rightOperand.ParseConstAttribute();
         int result = this.GetResultOfOperation(leftNumber, rightNumber);
-        return new Token(TokenType.Const, result.ToString());
+        return new Token(TokenType.Const, this.RootToken.Line, result.ToString());
     }
 
     private int GetResultOfOperation(int leftOperand, int rightOperand)

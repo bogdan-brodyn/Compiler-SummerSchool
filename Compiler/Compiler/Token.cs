@@ -8,26 +8,24 @@ namespace Compiler;
 
 using System.Text.Json.Serialization;
 
-public class Token(TokenType type, string? attribute = null)
+public class Token(TokenType type, int line = 0, string? attribute = null)
 {
     public static Token Semicolon => new (TokenType.Semicolon);
 
-    public static Token Assignment => new (TokenType.Operator, ":=");
+    public static Token Assignment => new (TokenType.Operator, attribute: ":=");
 
-    public static Token If => new (TokenType.Keyword, "if");
+    public static Token If => new (TokenType.Keyword, attribute: "if");
 
-    public static Token While => new (TokenType.Keyword, "while");
+    public static Token While => new (TokenType.Keyword, attribute: "while");
 
     public static Token Empty => new (TokenType.Empty);
 
     public TokenType Type { get; } = type;
 
-    public string? Attribute { get; } = attribute;
+    [JsonIgnore]
+    public int Line { get; } = line;
 
-    public override string ToString()
-    {
-        return $"{this.Type} {this.Attribute}";
-    }
+    public string? Attribute { get; } = attribute;
 
     public int ParseConstAttribute()
     {
@@ -38,6 +36,9 @@ public class Token(TokenType type, string? attribute = null)
 
         return int.Parse(this.Attribute);
     }
+
+    public override string ToString()
+        => $"{this.Type} {this.Attribute}";
 
     public bool IsKeyword(string keyword)
         => this.Type == TokenType.Keyword &&

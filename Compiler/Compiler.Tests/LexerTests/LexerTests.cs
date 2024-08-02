@@ -18,22 +18,17 @@ public class LexerTests
         {
             var sampleFiles = Directory.GetFiles(dir);
             var text = File.ReadAllText(sampleFiles.First(file => file.EndsWith(".txt")));
-            var jsonString = File.ReadAllText(sampleFiles.First(file => file.EndsWith(".json")));
-            var options = new JsonSerializerOptions() { WriteIndented = true };
-            List<Token>? expectedTokens = JsonSerializer.Deserialize<List<Token>>(jsonString, options);
-            if (expectedTokens is null)
-            {
-                throw new JsonException("Json Serializtion failed!");
-            }
-
-            yield return new TestCaseData(text, expectedTokens, Path.GetFileName(dir));
+            var expectedJson = File.ReadAllText(sampleFiles.First(file => file.EndsWith(".json")));
+            yield return new TestCaseData(text, expectedJson, Path.GetFileName(dir));
         }
     }
 
     [TestCaseSource(nameof(Sample))]
-    public void Test(string text, List<Token> expectedTokens, string testName)
+    public void Test(string text, string expectedJson, string testName)
     {
-        var actualTokens = Lexer.Analyze(text);
-        Assert.That(actualTokens, Is.EqualTo(expectedTokens).UsingPropertiesComparer(), $"Test: {testName} failed!");
+        var tokens = Lexer.Analyze(text);
+        var options = new JsonSerializerOptions() { WriteIndented = true };
+        var actualJson = JsonSerializer.Serialize(tokens, options);
+        Assert.That(actualJson, Is.EqualTo(expectedJson), $"Test: {testName} failed!");
     }
 }
