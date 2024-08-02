@@ -1,0 +1,6 @@
+a:=0; b:=1; n:=5;
+while (n) do
+    b:=a+b;
+    a:=b-a;
+    n:=n-1;
+done

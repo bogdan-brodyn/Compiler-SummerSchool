@@ -11,6 +11,7 @@ using System.Text;
 public static class Lexer
 {
     private static readonly string[] Keywords = { "if", "then", "else", "fi", "while", "do", "done" };
+    private static int currentLine;
 
     private enum State
     {
@@ -27,6 +28,7 @@ public static class Lexer
 
     public static List<Token> Analyze(string input)
     {
+        currentLine = 1;
         var tokens = new List<Token>();
         var currentState = State.InitialState;
         var attributeAcc = new StringBuilder();
@@ -36,6 +38,10 @@ public static class Lexer
             var newState = SwitchState(currentState, inputChar);
             RespondStateChange(currentState, inputChar, newState, tokens, attributeAcc);
             currentState = newState;
+            if (inputChar == '\n')
+            {
+                ++currentLine;
+            }
         }
 
         RespondStateChange(currentState, ' ', State.InitialState, tokens, attributeAcc);
@@ -47,7 +53,7 @@ public static class Lexer
     {
         if (currentState == State.ConstReadingState && currentState != newState)
         {
-            tokens.Add(new Token(TokenType.Const, attributeAcc.ToString()));
+            tokens.Add(new Token(TokenType.Const, currentLine, attributeAcc.ToString()));
             attributeAcc.Clear();
         }
 
@@ -55,7 +61,7 @@ public static class Lexer
         {
             var attribute = attributeAcc.ToString();
             tokens.Add(new Token(
-                Keywords.Contains(attribute) ? TokenType.Keyword : TokenType.Id, attribute));
+                Keywords.Contains(attribute) ? TokenType.Keyword : TokenType.Id, currentLine, attribute));
             attributeAcc.Clear();
         }
 
@@ -66,19 +72,19 @@ public static class Lexer
                 attributeAcc.Append(inputChar);
                 break;
             case State.OperatorReadingState:
-                tokens.Add(new Token(TokenType.Operator, inputChar.ToString()));
+                tokens.Add(new Token(TokenType.Operator, currentLine, inputChar.ToString()));
                 break;
             case State.AssignmentEndReadingState:
-                tokens.Add(new Token(TokenType.Operator, ":="));
+                tokens.Add(new Token(TokenType.Operator, currentLine, ":="));
                 break;
             case State.SemicolonReadingState:
-                tokens.Add(new Token(TokenType.Semicolon));
+                tokens.Add(new Token(TokenType.Semicolon, currentLine));
                 break;
             case State.LeftParenthesisReadingState:
-                tokens.Add(new Token(TokenType.LeftParenthesis));
+                tokens.Add(new Token(TokenType.LeftParenthesis, currentLine));
                 break;
             case State.RightParenthesisReadingState:
-                tokens.Add(new Token(TokenType.RightParenthesis));
+                tokens.Add(new Token(TokenType.RightParenthesis, currentLine));
                 break;
         }
     }
@@ -102,7 +108,7 @@ public static class Lexer
                 if (ch == ';') return State.SemicolonReadingState;
                 if (ch == '(') return State.LeftParenthesisReadingState;
                 if (ch == ')') return State.RightParenthesisReadingState;
-                throw new Exception();
+                throw new InvalidDataException(GetErrorMessage(ch));
             case State.ConstReadingState:
                 if (ch == ' ' || ch == '\r' || ch == '\t' || ch == '\n') return State.InitialState;
                 if (ch >= '0' && ch <= '9') return State.ConstReadingState;
@@ -111,7 +117,7 @@ public static class Lexer
                 if (ch == ';') return State.SemicolonReadingState;
                 if (ch == '(') return State.LeftParenthesisReadingState;
                 if (ch == ')') return State.RightParenthesisReadingState;
-                throw new Exception();
+                throw new InvalidDataException(GetErrorMessage(ch));
             case State.IdOrKeywordReadingState:
                 if (ch == ' ' || ch == '\r' || ch == '\t' || ch == '\n') return State.InitialState;
                 if (ch >= '0' && ch <= '9') return State.IdOrKeywordReadingState;
@@ -121,13 +127,16 @@ public static class Lexer
                 if (ch == ';') return State.SemicolonReadingState;
                 if (ch == '(') return State.LeftParenthesisReadingState;
                 if (ch == ')') return State.RightParenthesisReadingState;
-                throw new Exception();
+                throw new InvalidDataException(GetErrorMessage(ch));
             case State.AssignmentStartReadingState:
                 if (ch == '=') return State.AssignmentEndReadingState;
-                throw new Exception();
+                throw new InvalidDataException(GetErrorMessage(ch));
             default:
-                throw new Exception();
+                throw new InvalidDataException(GetErrorMessage(ch));
         }
     }
 #pragma warning restore SA1503 // Braces should not be omitted
+
+    private static string GetErrorMessage(char ch)
+        => $"Line ({currentLine})\nUnexpected character: {ch}";
 }

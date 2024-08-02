@@ -1,0 +1,11 @@
+l:=1;
+r:=15;
+search:=5;
+while (r - l - 1) do
+    m:=(l+r) / 2;
+    if (search-m) then
+        l:=m+1;
+    else
+        r:=m;
+    fi
+done

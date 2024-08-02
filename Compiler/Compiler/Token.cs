@@ -8,16 +8,49 @@ namespace Compiler;
 
 using System.Text.Json.Serialization;
 
-public class Token(TokenType type, string? attribute = null)
+public class Token(TokenType type, int line = 0, string? attribute = null)
 {
+    public static Token Semicolon => new (TokenType.Semicolon);
+
+    public static Token Assignment => new (TokenType.Operator, attribute: ":=");
+
+    public static Token If => new (TokenType.Keyword, attribute: "if");
+
+    public static Token While => new (TokenType.Keyword, attribute: "while");
+
+    public static Token Empty => new (TokenType.Empty);
+
     public TokenType Type { get; } = type;
+
+    [JsonIgnore]
+    public int Line { get; } = line;
 
     public string? Attribute { get; } = attribute;
 
-    public override string ToString()
+    public int ParseConstAttribute()
     {
-        return $"{this.Type} {this.Attribute}";
+        if (this.Type != TokenType.Const || this.Attribute == null)
+        {
+            throw new InvalidOperationException();
+        }
+
+        return int.Parse(this.Attribute);
     }
+
+    public override string ToString()
+        => $"{this.Type} {this.Attribute}";
+
+    public bool IsKeyword(string keyword)
+        => this.Type == TokenType.Keyword &&
+           this.Attribute == keyword;
+
+    public bool IsOperator(string op)
+        => this.Type == TokenType.Operator &&
+           this.Attribute == op;
+
+    public bool IsConstOrId()
+        => this.Type == TokenType.Const ||
+           this.Type == TokenType.Id;
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter<TokenType>))]
@@ -30,4 +63,5 @@ public enum TokenType
     Semicolon,
     LeftParenthesis,
     RightParenthesis,
+    Empty,
 }

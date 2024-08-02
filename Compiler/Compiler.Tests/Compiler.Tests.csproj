@@ -36,6 +36,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="ParserTests\TestSamples\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+      <Content Include="OptimizationTests\TestSamples\**">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" />
   </ItemGroup>
 

@@ -1,0 +1,149 @@
+{
+  "RootToken": {
+    "Type": "Semicolon",
+    "Attribute": null
+  },
+  "Children": [
+    {
+      "RootToken": {
+        "Type": "Operator",
+        "Attribute": ":="
+      },
+      "Children": [
+        {
+          "RootToken": {
+            "Type": "Id",
+            "Attribute": "acc"
+          },
+          "Children": []
+        },
+        {
+          "RootToken": {
+            "Type": "Const",
+            "Attribute": "1"
+          },
+          "Children": []
+        }
+      ]
+    },
+    {
+      "RootToken": {
+        "Type": "Operator",
+        "Attribute": ":="
+      },
+      "Children": [
+        {
+          "RootToken": {
+            "Type": "Id",
+            "Attribute": "n"
+          },
+          "Children": []
+        },
+        {
+          "RootToken": {
+            "Type": "Const",
+            "Attribute": "6"
+          },
+          "Children": []
+        }
+      ]
+    },
+    {
+      "RootToken": {
+        "Type": "Keyword",
+        "Attribute": "while"
+      },
+      "Children": [
+        {
+          "RootToken": {
+            "Type": "Id",
+            "Attribute": "n"
+          },
+          "Children": []
+        },
+        {
+          "RootToken": {
+            "Type": "Semicolon",
+            "Attribute": null
+          },
+          "Children": [
+            {
+              "RootToken": {
+                "Type": "Operator",
+                "Attribute": ":="
+              },
+              "Children": [
+                {
+                  "RootToken": {
+                    "Type": "Id",
+                    "Attribute": "acc"
+                  },
+                  "Children": []
+                },
+                {
+                  "RootToken": {
+                    "Type": "Operator",
+                    "Attribute": "*"
+                  },
+                  "Children": [
+                    {
+                      "RootToken": {
+                        "Type": "Id",
+                        "Attribute": "acc"
+                      },
+                      "Children": []
+                    },
+                    {
+                      "RootToken": {
+                        "Type": "Id",
+                        "Attribute": "n"
+                      },
+                      "Children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "RootToken": {
+                "Type": "Operator",
+                "Attribute": ":="
+              },
+              "Children": [
+                {
+                  "RootToken": {
+                    "Type": "Id",
+                    "Attribute": "n"
+                  },
+                  "Children": []
+                },
+                {
+                  "RootToken": {
+                    "Type": "Operator",
+                    "Attribute": "-"
+                  },
+                  "Children": [
+                    {
+                      "RootToken": {
+                        "Type": "Id",
+                        "Attribute": "n"
+                      },
+                      "Children": []
+                    },
+                    {
+                      "RootToken": {
+                        "Type": "Const",
+                        "Attribute": "1"
+                      },
+                      "Children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

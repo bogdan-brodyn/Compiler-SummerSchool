@@ -1,0 +1,284 @@
+{
+  "RootToken": {
+    "Type": "Semicolon",
+    "Attribute": null
+  },
+  "Children": [
+    {
+      "RootToken": {
+        "Type": "Operator",
+        "Attribute": ":="
+      },
+      "Children": [
+        {
+          "RootToken": {
+            "Type": "Id",
+            "Attribute": "l"
+          },
+          "Children": []
+        },
+        {
+          "RootToken": {
+            "Type": "Const",
+            "Attribute": "1"
+          },
+          "Children": []
+        }
+      ]
+    },
+    {
+      "RootToken": {
+        "Type": "Operator",
+        "Attribute": ":="
+      },
+      "Children": [
+        {
+          "RootToken": {
+            "Type": "Id",
+            "Attribute": "r"
+          },
+          "Children": []
+        },
+        {
+          "RootToken": {
+            "Type": "Const",
+            "Attribute": "15"
+          },
+          "Children": []
+        }
+      ]
+    },
+    {
+      "RootToken": {
+        "Type": "Operator",
+        "Attribute": ":="
+      },
+      "Children": [
+        {
+          "RootToken": {
+            "Type": "Id",
+            "Attribute": "search"
+          },
+          "Children": []
+        },
+        {
+          "RootToken": {
+            "Type": "Const",
+            "Attribute": "5"
+          },
+          "Children": []
+        }
+      ]
+    },
+    {
+      "RootToken": {
+        "Type": "Keyword",
+        "Attribute": "while"
+      },
+      "Children": [
+        {
+          "RootToken": {
+            "Type": "Operator",
+            "Attribute": "-"
+          },
+          "Children": [
+            {
+              "RootToken": {
+                "Type": "Operator",
+                "Attribute": "-"
+              },
+              "Children": [
+                {
+                  "RootToken": {
+                    "Type": "Id",
+                    "Attribute": "r"
+                  },
+                  "Children": []
+                },
+                {
+                  "RootToken": {
+                    "Type": "Id",
+                    "Attribute": "l"
+                  },
+                  "Children": []
+                }
+              ]
+            },
+            {
+              "RootToken": {
+                "Type": "Const",
+                "Attribute": "1"
+              },
+              "Children": []
+            }
+          ]
+        },
+        {
+          "RootToken": {
+            "Type": "Semicolon",
+            "Attribute": null
+          },
+          "Children": [
+            {
+              "RootToken": {
+                "Type": "Operator",
+                "Attribute": ":="
+              },
+              "Children": [
+                {
+                  "RootToken": {
+                    "Type": "Id",
+                    "Attribute": "m"
+                  },
+                  "Children": []
+                },
+                {
+                  "RootToken": {
+                    "Type": "Operator",
+                    "Attribute": "/"
+                  },
+                  "Children": [
+                    {
+                      "RootToken": {
+                        "Type": "Operator",
+                        "Attribute": "\u002B"
+                      },
+                      "Children": [
+                        {
+                          "RootToken": {
+                            "Type": "Id",
+                            "Attribute": "l"
+                          },
+                          "Children": []
+                        },
+                        {
+                          "RootToken": {
+                            "Type": "Id",
+                            "Attribute": "r"
+                          },
+                          "Children": []
+                        }
+                      ]
+                    },
+                    {
+                      "RootToken": {
+                        "Type": "Const",
+                        "Attribute": "2"
+                      },
+                      "Children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "RootToken": {
+                "Type": "Keyword",
+                "Attribute": "if"
+              },
+              "Children": [
+                {
+                  "RootToken": {
+                    "Type": "Operator",
+                    "Attribute": "-"
+                  },
+                  "Children": [
+                    {
+                      "RootToken": {
+                        "Type": "Id",
+                        "Attribute": "search"
+                      },
+                      "Children": []
+                    },
+                    {
+                      "RootToken": {
+                        "Type": "Id",
+                        "Attribute": "m"
+                      },
+                      "Children": []
+                    }
+                  ]
+                },
+                {
+                  "RootToken": {
+                    "Type": "Semicolon",
+                    "Attribute": null
+                  },
+                  "Children": [
+                    {
+                      "RootToken": {
+                        "Type": "Operator",
+                        "Attribute": ":="
+                      },
+                      "Children": [
+                        {
+                          "RootToken": {
+                            "Type": "Id",
+                            "Attribute": "l"
+                          },
+                          "Children": []
+                        },
+                        {
+                          "RootToken": {
+                            "Type": "Operator",
+                            "Attribute": "\u002B"
+                          },
+                          "Children": [
+                            {
+                              "RootToken": {
+                                "Type": "Id",
+                                "Attribute": "m"
+                              },
+                              "Children": []
+                            },
+                            {
+                              "RootToken": {
+                                "Type": "Const",
+                                "Attribute": "1"
+                              },
+                              "Children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "RootToken": {
+                    "Type": "Semicolon",
+                    "Attribute": null
+                  },
+                  "Children": [
+                    {
+                      "RootToken": {
+                        "Type": "Operator",
+                        "Attribute": ":="
+                      },
+                      "Children": [
+                        {
+                          "RootToken": {
+                            "Type": "Id",
+                            "Attribute": "r"
+                          },
+                          "Children": []
+                        },
+                        {
+                          "RootToken": {
+                            "Type": "Id",
+                            "Attribute": "m"
+                          },
+                          "Children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+num := 101;
+root := 10;
+ind := 2;
+while (root - ind) do
+    if (num - num / ind * ind) then
+        ind := ind + 1;
+    else
+        ind := root;
+    fi
+done

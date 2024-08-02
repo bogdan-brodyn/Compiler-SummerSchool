@@ -8,10 +8,10 @@ namespace Compiler.Tests;
 
 using System.Text.Json;
 
-public class LexerTests
+public class ParserTests
 {
-    private const string CorrectSamplesPath = "LexerTests/TestSamples/Correct";
-    private const string IncorrectSamplesPath = "LexerTests/TestSamples/Incorrect";
+    private const string CorrectSamplesPath = "ParserTests/TestSamples/Correct";
+    private const string IncorrectSamplesPath = "ParserTests/TestSamples/Incorrect";
 
     public static IEnumerable<TestCaseData> CorrectTestCases()
     {
@@ -38,14 +38,16 @@ public class LexerTests
     public void Test_CorrectCases(string text, string expectedJson, string testName)
     {
         var tokens = Lexer.Analyze(text);
+        var ast = Parser.Parse(tokens);
         var options = new JsonSerializerOptions() { WriteIndented = true };
-        var actualJson = JsonSerializer.Serialize(tokens, options);
+        var actualJson = JsonSerializer.Serialize(ast, options);
         Assert.That(actualJson, Is.EqualTo(expectedJson), $"Test: {testName} failed!");
     }
 
     [TestCaseSource(nameof(IncorrectTestCases))]
     public void Test_IncorrectCases(string text, string testName)
     {
-        Assert.Throws<InvalidDataException>(() => Lexer.Analyze(text), $"Test: {testName} failed!");
+        var tokens = Lexer.Analyze(text);
+        Assert.Throws<InvalidDataException>(() => Parser.Parse(tokens), $"Test: {testName} failed!");
     }
 }

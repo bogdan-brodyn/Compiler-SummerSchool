@@ -1,0 +1,19 @@
+mn := 90 * 3;
+a := 0;
+
+while (mn) do
+  mn := mn / 10;
+  a := a + 1;
+
+  if (a / 2) then
+    mn := mn + 3;
+  fi
+done
+
+b := 0;
+
+if (a - (36 + 64)) then
+  b := a / 2;
+else
+  b := mn;
+fi
