@@ -60,8 +60,10 @@ public static class AssemblerCodeGenerator
         {
             GenerateWhileCode(syntaxTree);
         }
-
-        throw new InvalidOperationException("Unexpected token");
+        else
+        {
+            throw new InvalidOperationException("Unexpected token");
+        }
     }
 
     private static void GenerateExpressionCode(string register, SyntaxTree syntaxTree)
