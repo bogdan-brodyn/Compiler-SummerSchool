@@ -108,7 +108,7 @@ public static class Lexer
                 if (ch == ';') return State.SemicolonReadingState;
                 if (ch == '(') return State.LeftParenthesisReadingState;
                 if (ch == ')') return State.RightParenthesisReadingState;
-                throw new InvalidDataException(GetErrorMessage(ch));
+                throw new InvalidTokenException(currentLine, ch);
             case State.ConstReadingState:
                 if (ch == ' ' || ch == '\r' || ch == '\t' || ch == '\n') return State.InitialState;
                 if (ch >= '0' && ch <= '9') return State.ConstReadingState;
@@ -117,7 +117,7 @@ public static class Lexer
                 if (ch == ';') return State.SemicolonReadingState;
                 if (ch == '(') return State.LeftParenthesisReadingState;
                 if (ch == ')') return State.RightParenthesisReadingState;
-                throw new InvalidDataException(GetErrorMessage(ch));
+                throw new InvalidTokenException(currentLine, ch);
             case State.IdOrKeywordReadingState:
                 if (ch == ' ' || ch == '\r' || ch == '\t' || ch == '\n') return State.InitialState;
                 if (ch >= '0' && ch <= '9') return State.IdOrKeywordReadingState;
@@ -127,16 +127,13 @@ public static class Lexer
                 if (ch == ';') return State.SemicolonReadingState;
                 if (ch == '(') return State.LeftParenthesisReadingState;
                 if (ch == ')') return State.RightParenthesisReadingState;
-                throw new InvalidDataException(GetErrorMessage(ch));
+                throw new InvalidTokenException(currentLine, ch);
             case State.AssignmentStartReadingState:
                 if (ch == '=') return State.AssignmentEndReadingState;
-                throw new InvalidDataException(GetErrorMessage(ch));
+                throw new InvalidTokenException(currentLine, ch);
             default:
-                throw new InvalidDataException(GetErrorMessage(ch));
+                throw new InvalidTokenException(currentLine, ch);
         }
     }
 #pragma warning restore SA1503 // Braces should not be omitted
-
-    private static string GetErrorMessage(char ch)
-        => $"Line ({currentLine})\nUnexpected character: {ch}";
 }

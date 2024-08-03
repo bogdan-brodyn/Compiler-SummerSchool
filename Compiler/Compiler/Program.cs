@@ -35,7 +35,8 @@ public static class Program
     private static void WriteArgumentErrorMessage()
     {
         Console.WriteLine(
-            "Error: expected arguments: {source file path} {destination file path}");
+            "Error: incorrect arguments\n" +
+            "Expected: {source file path} {destination file path}");
     }
 
     private static string ReadFile(string path)
@@ -54,7 +55,7 @@ public static class Program
             ast.Optimize();
             AssemblerCodeGenerator.Generate(destinationPath, ast);
         }
-        catch (Exception e) when (e is InvalidDataException ||
+        catch (SystemException e) when (e is CompilerException ||
             e is FileNotFoundException || e is DirectoryNotFoundException)
         {
             Console.WriteLine($"Error: {e.Message}");

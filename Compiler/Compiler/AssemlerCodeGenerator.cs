@@ -27,7 +27,7 @@ public static class AssemblerCodeGenerator
     {
         if (streamWriter is null)
         {
-            throw new Exception();
+            throw new InvalidOperationException();
         }
 
         for (var i = 0; i < nestingCounter; ++i)
@@ -60,10 +60,8 @@ public static class AssemblerCodeGenerator
         {
             GenerateWhileCode(syntaxTree);
         }
-        else
-        {
-            throw new Exception();
-        }
+
+        throw new InvalidOperationException("Unexpected token");
     }
 
     private static void GenerateExpressionCode(string register, SyntaxTree syntaxTree)
@@ -83,7 +81,7 @@ public static class AssemblerCodeGenerator
             var isIdContained = keyValuePairs.TryGetValue(id, out int address);
             if (!isIdContained)
             {
-                throw new Exception();
+                throw new UndefinedVariableException(syntaxTree.RootToken.Line, id);
             }
 
             WriteLine($"LW {register}, {address}(x0)");
@@ -92,24 +90,19 @@ public static class AssemblerCodeGenerator
 
         if (syntaxTree.RootToken.Type is not TokenType.Operator)
         {
-            throw new Exception();
-        }
-
-        if (syntaxTree.Children.Count != 2)
-        {
-            throw new Exception();
+            throw new InvalidOperationException();
         }
 
         var rd = register;
         var rs1 = "t1";
         var rs2 = "t2";
 
-        GenerateExpressionCode(rs1, syntaxTree.Children[0]);
+        GenerateExpressionCode(rs1, syntaxTree.LeftChild);
 
         var memoryAddress = storedBytesCounter;
         storedBytesCounter += 4;
         WriteLine($"SW {rs1}, {memoryAddress}(x0)");
-        GenerateExpressionCode(rs2, syntaxTree.Children[1]);
+        GenerateExpressionCode(rs2, syntaxTree.RightChild);
         WriteLine($"LW {rs1}, {memoryAddress}(x0)");
 
         switch (syntaxTree.RootToken.Attribute)
@@ -127,15 +120,15 @@ public static class AssemblerCodeGenerator
                 WriteLine($"DIV {rd}, {rs1}, {rs2}");
                 break;
             default:
-                throw new Exception();
+                throw new InvalidOperationException("Unknown operation");
         }
     }
 
     private static void GenerateAssignmentCode(SyntaxTree syntaxTree)
     {
-        var id = syntaxTree.Children[0].RootToken.Attribute;
+        var id = syntaxTree.LeftChild.RootToken.Attribute;
         ArgumentException.ThrowIfNullOrEmpty(id);
-        GenerateExpressionCode("t1", syntaxTree.Children[1]);
+        GenerateExpressionCode("t1", syntaxTree.RightChild);
 
         var isIdContained = keyValuePairs.TryGetValue(id, out int memoryAddress);
         if (isIdContained)

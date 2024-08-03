@@ -6,6 +6,8 @@
 
 namespace Compiler;
 
+using System.Text.Json.Serialization;
+
 public class SyntaxTree
 {
     public SyntaxTree(Token rootToken, List<SyntaxTree>? children = null)
@@ -39,7 +41,8 @@ public class SyntaxTree
 
     public List<SyntaxTree> Children { get; private set; }
 
-    private SyntaxTree LeftChild
+    [JsonIgnore]
+    public SyntaxTree LeftChild
     {
         get
         {
@@ -52,7 +55,8 @@ public class SyntaxTree
         }
     }
 
-    private SyntaxTree RightChild
+    [JsonIgnore]
+    public SyntaxTree RightChild
     {
         get
         {

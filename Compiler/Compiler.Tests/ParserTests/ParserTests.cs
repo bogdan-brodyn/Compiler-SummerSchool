@@ -48,6 +48,6 @@ public class ParserTests
     public void Test_IncorrectCases(string text, string testName)
     {
         var tokens = Lexer.Analyze(text);
-        Assert.Throws<InvalidDataException>(() => Parser.Parse(tokens), $"Test: {testName} failed!");
+        Assert.Throws<InvalidSyntaxException>(() => Parser.Parse(tokens), $"Test: {testName} failed!");
     }
 }

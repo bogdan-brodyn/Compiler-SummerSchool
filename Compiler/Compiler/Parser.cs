@@ -35,7 +35,7 @@ public static class Parser
         var (program, errorOccured) = ParseStatements();
         if (errorOccured)
         {
-            throw new InvalidDataException(GetErrorMessage("id or keyword"));
+            throw new InvalidSyntaxException(currentLine, "id or keyword", CurrentToken.ToString());
         }
 
         return program;
@@ -92,13 +92,13 @@ public static class Parser
         ++position;
         if (!CurrentToken.IsOperator(":="))
         {
-            throw new InvalidDataException(GetErrorMessage("':='"));
+            throw new InvalidSyntaxException(currentLine, "':='", CurrentToken.ToString());
         }
 
         var expressionTree = ParseExpression();
         if (CurrentToken.Type != TokenType.Semicolon)
         {
-            throw new InvalidDataException(GetErrorMessage("';'"));
+            throw new InvalidSyntaxException(currentLine, "';'", CurrentToken.ToString());
         }
 
         ++position;
@@ -110,7 +110,7 @@ public static class Parser
         var conditionTree = ParseCondition();
         if (!CurrentToken.IsKeyword("then"))
         {
-            throw new InvalidDataException(GetErrorMessage("'then'"));
+            throw new InvalidSyntaxException(currentLine, "'then'", CurrentToken.ToString());
         }
 
         ++position;
@@ -129,14 +129,14 @@ public static class Parser
         var conditionTree = ParseCondition();
         if (!CurrentToken.IsKeyword("do"))
         {
-            throw new InvalidDataException(GetErrorMessage("'do'"));
+            throw new InvalidSyntaxException(currentLine, "'do'", CurrentToken.ToString());
         }
 
         ++position;
         var (doTree, _) = ParseStatements();
         if (!CurrentToken.IsKeyword("done"))
         {
-            throw new InvalidDataException(GetErrorMessage("'done'"));
+            throw new InvalidSyntaxException(currentLine, "'done'", CurrentToken.ToString());
         }
 
         ++position;
@@ -148,7 +148,7 @@ public static class Parser
         ++position;
         if (CurrentToken.Type != TokenType.LeftParenthesis)
         {
-            throw new InvalidDataException(GetErrorMessage("'('"));
+            throw new InvalidSyntaxException(currentLine, "'('", CurrentToken.ToString());
         }
 
         return ParseParExpression();
@@ -165,7 +165,7 @@ public static class Parser
 
         if (!CurrentToken.IsKeyword("fi"))
         {
-            throw new InvalidDataException(GetErrorMessage("'fi'"));
+            throw new InvalidSyntaxException(currentLine, "'fi'", CurrentToken.ToString());
         }
 
         ++position;
@@ -193,7 +193,7 @@ public static class Parser
         }
         else
         {
-            throw new InvalidDataException(GetErrorMessage("const or id"));
+            throw new InvalidSyntaxException(currentLine, "const or id", CurrentToken.ToString());
         }
 
         return makeRecursiveCall ? ParseTermExtra(operand) : operand;
@@ -230,13 +230,10 @@ public static class Parser
         var expressionTree = ParseExpression();
         if (CurrentToken.Type != TokenType.RightParenthesis)
         {
-            throw new InvalidDataException(GetErrorMessage("')'"));
+            throw new InvalidSyntaxException(currentLine, "')'", CurrentToken.ToString());
         }
 
         ++position;
         return expressionTree;
     }
-
-    private static string GetErrorMessage(string expectedToken)
-        => $"Line ({currentLine})\nInvalid syntax: {expectedToken} expected, but got {CurrentToken}";
 }
