@@ -8,7 +8,7 @@ namespace Compiler;
 
 public static class Parser
 {
-    private static List<Token> tokensToParse = new ();
+    private static List<Token>? tokensToParse;
     private static int position;
     private static int currentLine;
 
@@ -16,7 +16,7 @@ public static class Parser
     {
         get
         {
-            if (position < tokensToParse.Count)
+            if (tokensToParse != null && position < tokensToParse.Count)
             {
                 var token = tokensToParse[position];
                 currentLine = token.Line;
@@ -51,7 +51,7 @@ public static class Parser
     private static (List<SyntaxTree>, bool) GetStatementsList()
     {
         var parsedStatements = new List<SyntaxTree>();
-        if (position >= tokensToParse.Count)
+        if (CurrentToken.Type == TokenType.Empty)
         {
             return (parsedStatements, false);
         }
