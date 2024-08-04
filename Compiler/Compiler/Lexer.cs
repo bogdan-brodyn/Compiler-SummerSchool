@@ -10,7 +10,9 @@ using System.Text;
 
 public static class Lexer
 {
-    private static readonly string[] Keywords = { "if", "then", "else", "fi", "while", "do", "done" };
+    private static readonly HashSet<string> Keywords =
+        new () { "if", "then", "else", "fi", "while", "do", "done" };
+
     private static int currentLine;
 
     private enum State

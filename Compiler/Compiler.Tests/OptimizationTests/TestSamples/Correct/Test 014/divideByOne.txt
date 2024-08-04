@@ -1,0 +1,6 @@
+q := 404 / 101;
+one := q - 3;
+
+if (w / one) then
+  q := 0;
+fi

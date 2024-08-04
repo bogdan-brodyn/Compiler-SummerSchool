@@ -1,0 +1,5 @@
+const := 421;
+
+while (const + 877988743892798324) do
+  n := n - 1;
+done

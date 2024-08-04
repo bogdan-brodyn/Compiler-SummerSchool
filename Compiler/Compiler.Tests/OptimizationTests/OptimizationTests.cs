@@ -10,11 +10,12 @@ using System.Text.Json;
 
 public class OptimizationTests
 {
-    private const string SamplesPath = "OptimizationTests/TestSamples";
+    private const string CorrectSamplesPath = "OptimizationTests/TestSamples/Correct";
+    private const string IncorrectSamplesPath = "OptimizationTests/TestSamples/Incorrect";
 
-    public static IEnumerable<TestCaseData> Sample()
+    public static IEnumerable<TestCaseData> CorrectTestCases()
     {
-        foreach (var dir in Directory.EnumerateDirectories(SamplesPath))
+        foreach (var dir in Directory.EnumerateDirectories(CorrectSamplesPath))
         {
             var sampleFiles = Directory.GetFiles(dir);
             var sourceCode = File.ReadAllText(sampleFiles.First(file => file.EndsWith(".txt")));
@@ -23,8 +24,18 @@ public class OptimizationTests
         }
     }
 
-    [TestCaseSource(nameof(Sample))]
-    public void Test(string sourceCode, string optimizedCode, string testName)
+    public static IEnumerable<TestCaseData> IncorrectTestCases()
+    {
+        foreach (var dir in Directory.EnumerateDirectories(IncorrectSamplesPath))
+        {
+            var sampleFiles = Directory.GetFiles(dir);
+            var sourceCode = File.ReadAllText(sampleFiles.First(file => file.EndsWith(".txt")));
+            yield return new TestCaseData(sourceCode, Path.GetFileName(dir));
+        }
+    }
+
+    [TestCaseSource(nameof(CorrectTestCases))]
+    public void Test_CorrectCases(string sourceCode, string optimizedCode, string testName)
     {
         var actualTree = Parser.Parse(Lexer.Analyze(sourceCode));
         var expectedTree = Parser.Parse(Lexer.Analyze(optimizedCode));
@@ -35,5 +46,12 @@ public class OptimizationTests
         var expectedJson = JsonSerializer.Serialize(expectedTree, options);
 
         Assert.That(actualJson, Is.EqualTo(expectedJson), $"Test: {testName} failed!");
+    }
+
+    [TestCaseSource(nameof(IncorrectTestCases))]
+    public void Test_IncorrectCases(string sourceCode, string testName)
+    {
+        var ast = Parser.Parse(Lexer.Analyze(sourceCode));
+        Assert.Throws<CompilerException>(ast.Optimize, $"Test: {testName} failed!");
     }
 }

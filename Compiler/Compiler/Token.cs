@@ -34,7 +34,12 @@ public class Token(TokenType type, int line = 0, string? attribute = null)
             throw new InvalidOperationException();
         }
 
-        return int.Parse(this.Attribute);
+        if (!int.TryParse(this.Attribute, out int value))
+        {
+            throw new CompilerException(this.Line, $"Const overflow: {this.Attribute}");
+        }
+
+        return value;
     }
 
     public override string ToString()
