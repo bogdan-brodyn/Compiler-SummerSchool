@@ -29,7 +29,10 @@ public static class Program
 
     private static void WriteInfo()
     {
-        throw new NotImplementedException();
+        Console.WriteLine(
+            "Compiler of simple imperative language for RISC-V architecture\n" +
+            "For more info see: https://github.com/bogdan-brodyn/Compiler-SummerSchool/\n\n" +
+            "To compile your program use arguments: {source file path} {destination file path}");
     }
 
     private static void WriteArgumentErrorMessage()
