@@ -46,6 +46,6 @@ public class LexerTests
     [TestCaseSource(nameof(IncorrectTestCases))]
     public void Test_IncorrectCases(string text, string testName)
     {
-        Assert.Throws<InvalidDataException>(() => Lexer.Analyze(text), $"Test: {testName} failed!");
+        Assert.Throws<InvalidTokenException>(() => Lexer.Analyze(text), $"Test: {testName} failed!");
     }
 }

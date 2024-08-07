@@ -6,6 +6,8 @@
 
 namespace Compiler;
 
+using System.Text.Json.Serialization;
+
 public class SyntaxTree
 {
     public SyntaxTree(Token rootToken, List<SyntaxTree>? children = null)
@@ -39,7 +41,8 @@ public class SyntaxTree
 
     public List<SyntaxTree> Children { get; private set; }
 
-    private SyntaxTree LeftChild
+    [JsonIgnore]
+    public SyntaxTree LeftChild
     {
         get
         {
@@ -50,9 +53,12 @@ public class SyntaxTree
 
             return this.Children[0];
         }
+
+        private set => this.Children[0] = value;
     }
 
-    private SyntaxTree RightChild
+    [JsonIgnore]
+    public SyntaxTree RightChild
     {
         get
         {
@@ -63,6 +69,8 @@ public class SyntaxTree
 
             return this.Children[1];
         }
+
+        private set => this.Children[1] = value;
     }
 
     public void Optimize()
@@ -107,15 +115,13 @@ public class SyntaxTree
 
     private OptimizationData OptimizeAssignment(Dictionary<string, string> idValues)
     {
-        var idTree = this.LeftChild;
-        var expressionTree = this.RightChild;
+        string id = this.LeftChild.RootToken.Attribute ?? throw new InvalidOperationException();
+        this.RightChild = this.RightChild.OptimizeExpression(idValues);
 
-        string id = idTree.RootToken.Attribute ?? throw new InvalidOperationException();
-        expressionTree.OptimizeExpression(idValues);
-
-        if (expressionTree.RootToken.Type == TokenType.Const)
+        if (this.RightChild.RootToken.Type == TokenType.Const)
         {
-            string value = expressionTree.RootToken.Attribute ?? throw new InvalidOperationException();
+            this.RightChild.RootToken.ParseConstAttribute();
+            string value = this.RightChild.RootToken.Attribute ?? throw new InvalidOperationException();
             idValues[id] = value;
         }
 
@@ -124,11 +130,10 @@ public class SyntaxTree
 
     private OptimizationData OptimizeIf(Dictionary<string, string> idValues)
     {
-        var conditionTree = this.Children[0];
         var thenTree = this.Children[1];
         var elseTree = this.Children.Count == 3 ? this.Children[2] : null;
 
-        conditionTree.OptimizeExpression(idValues);
+        this.Children[0] = this.Children[0].OptimizeExpression(idValues);
         thenTree.Optimize();
         elseTree?.Optimize();
 
@@ -137,9 +142,9 @@ public class SyntaxTree
             return new OptimizationData(Optimization.ReplaceStatement, null);
         }
 
-        if (conditionTree.RootToken.Type == TokenType.Const)
+        if (this.Children[0].RootToken.Type == TokenType.Const)
         {
-            int value = conditionTree.RootToken.ParseConstAttribute();
+            int value = this.Children[0].RootToken.ParseConstAttribute();
             if (value > 0)
             {
                 return new OptimizationData(Optimization.ReplaceStatement, thenTree.Children);
@@ -153,10 +158,9 @@ public class SyntaxTree
 
     private OptimizationData OptimizeWhile()
     {
-        var conditionTree = this.Children[0];
         var doTree = this.Children[1];
 
-        conditionTree.OptimizeExpression(null);
+        this.Children[0] = this.Children[0].OptimizeExpression(null);
         doTree.Optimize();
 
         if (TreeHasNoStatements(doTree))
@@ -164,9 +168,9 @@ public class SyntaxTree
             return new OptimizationData(Optimization.ReplaceStatement, null);
         }
 
-        if (conditionTree.RootToken.Type == TokenType.Const)
+        if (this.Children[0].RootToken.Type == TokenType.Const)
         {
-            int value = conditionTree.RootToken.ParseConstAttribute();
+            int value = this.Children[0].RootToken.ParseConstAttribute();
             if (value > 0)
             {
                 return new OptimizationData(Optimization.RemoveFollowingStatements, null);
@@ -210,24 +214,32 @@ public class SyntaxTree
         --position;
     }
 
-    private void OptimizeExpression(Dictionary<string, string>? idValues)
+    private SyntaxTree OptimizeExpression(Dictionary<string, string>? idValues)
     {
         if (this.RootToken.IsConstOrId())
         {
             this.SubstituteWithConstValue(idValues);
-            return;
+            return this;
         }
 
-        this.LeftChild.OptimizeExpression(idValues);
-        this.RightChild.OptimizeExpression(idValues);
+        this.LeftChild = this.LeftChild.OptimizeExpression(idValues);
+        this.RightChild = this.RightChild.OptimizeExpression(idValues);
 
         if (this.LeftChild.RootToken.Type == TokenType.Const &&
             this.RightChild.RootToken.Type == TokenType.Const)
         {
-            this.RootToken = this.GetResultToken(
-                this.LeftChild.RootToken, this.RightChild.RootToken);
-            this.Children.Clear();
+            return this.OptimizeExpression_Calculate();
         }
+        else if (this.LeftChild.RootToken.Type == TokenType.Const)
+        {
+            return this.OptimizeExpression_ConstOnLeft();
+        }
+        else if (this.RightChild.RootToken.Type == TokenType.Const)
+        {
+            return this.OptimizeExpression_ConstOnRight();
+        }
+
+        return this;
     }
 
     private void SubstituteWithConstValue(Dictionary<string, string>? idValues)
@@ -243,12 +255,22 @@ public class SyntaxTree
         }
     }
 
-    private Token GetResultToken(Token leftOperand, Token rightOperand)
+    private SyntaxTree OptimizeExpression_Calculate()
     {
-        int leftNumber = leftOperand.ParseConstAttribute();
-        int rightNumber = rightOperand.ParseConstAttribute();
-        int result = this.GetResultOfOperation(leftNumber, rightNumber);
-        return new Token(TokenType.Const, this.RootToken.Line, result.ToString());
+        int leftNumber = this.LeftChild.RootToken.ParseConstAttribute();
+        int rightNumber = this.RightChild.RootToken.ParseConstAttribute();
+        int result;
+
+        try
+        {
+            result = this.GetResultOfOperation(leftNumber, rightNumber);
+        }
+        catch (DivideByZeroException)
+        {
+            throw new CompilerException(this.RootToken.Line, "Division by zero");
+        }
+
+        return new (new Token(TokenType.Const, this.RootToken.Line, result.ToString()));
     }
 
     private int GetResultOfOperation(int leftOperand, int rightOperand)
@@ -262,6 +284,54 @@ public class SyntaxTree
             _ => throw new InvalidOperationException("Unknown operation"),
         };
     }
+
+#pragma warning disable SA1503 // Braces should not be omitted
+    private SyntaxTree OptimizeExpression_ConstOnLeft()
+    {
+        int value = this.LeftChild.RootToken.ParseConstAttribute();
+        switch (this.RootToken.Attribute)
+        {
+            case "+":
+                if (value == 0) return this.RightChild;
+                return this;
+            case "-":
+                return this;
+            case "*":
+                if (value == 0) return this.LeftChild;
+                if (value == 1) return this.RightChild;
+                return this;
+            case "/":
+                if (value == 0) return this.LeftChild;
+                return this;
+            default:
+                throw new InvalidOperationException("Unknown operation");
+        }
+    }
+
+    private SyntaxTree OptimizeExpression_ConstOnRight()
+    {
+        int value = this.RightChild.RootToken.ParseConstAttribute();
+        switch (this.RootToken.Attribute)
+        {
+            case "+":
+                if (value == 0) return this.LeftChild;
+                return this;
+            case "-":
+                if (value == 0) return this.LeftChild;
+                return this;
+            case "*":
+                if (value == 0) return this.RightChild;
+                if (value == 1) return this.LeftChild;
+                return this;
+            case "/":
+                if (value == 0) throw new CompilerException(this.RootToken.Line, "Division by zero");
+                if (value == 1) return this.LeftChild;
+                return this;
+            default:
+                throw new InvalidOperationException("Unknown operation");
+        }
+    }
+#pragma warning restore SA1503 // Braces should not be omitted
 
     private class OptimizationData(Optimization optimization, List<SyntaxTree>? statementsToInsert)
     {
